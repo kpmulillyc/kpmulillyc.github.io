@@ -19,7 +19,7 @@ const MHG_DOMAIN = 'https://tw.manhuagui.com'
 export const MHG_IMAGE_BASE_URL = 'https://i.hamreus.com'
 
 export const MHGInfo: SourceInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: 'ManHuaGui',
     description: 'ManHuaGui',
     author: 'kpwa',
