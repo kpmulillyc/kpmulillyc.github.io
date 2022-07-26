@@ -9,7 +9,6 @@
       "name": "ManHuaGui"
     }
   ],
-  
   "main": "index.js",
   "scripts": {
     "bundle": "paperback bundle",
@@ -45,7 +44,7 @@
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
     "lz-string": "^1.4.4",
-	"gh-pages": "^3.2.3",
+    "gh-pages": "^3.2.3",
     "paperback-cli": "^2.0.0-alpha.13",
     "paperback-extensions-common": "^4.3.5",
     "ts-mocha": "^7.0.0",

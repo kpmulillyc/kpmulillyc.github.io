@@ -32,7 +32,7 @@ const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/201
 export class MHG extends Source {
 
     requestManager = createRequestManager({
-        requestsPerSecond: 3,
+        requestsPerSecond: 1,
         requestTimeout: 8000,
         interceptor: {
             interceptRequest: async (request: Request): Promise<Request> => {
@@ -59,7 +59,7 @@ export class MHG extends Source {
 
     baseUrl: string = MHG_DOMAIN
     parser = new Parser()
-    userAgentRandomizer: string = `Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/78.0${Math.floor(Math.random() * 100000)}`
+    // userAgentRandomizer: string = `Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:77.0) Gecko/20100101 Firefox/78.0${Math.floor(Math.random() * 100000)}`
 
 
     override getMangaShareUrl(mangaId: string): string {
@@ -100,7 +100,8 @@ export class MHG extends Source {
             method: 'GET'
         })
         const data = await this.requestManager.schedule(request, 1)
-        const pages: string[] = this.parser.parseChapterDetails(data.data)
+        const $ = this.cheerio.load(data.data ?? data['fixedData'])
+        const pages: string[] = this.parser.parseChapterDetails($)
         return createChapterDetails({
             pages,
             id: chapterId,

@@ -53,10 +53,10 @@ export class Parser {
         return chapters
     }
 
-    parseChapterDetails($: string): string[] {
+    parseChapterDetails($: CheerioStatic): string[] {
         const pages: string[] = []
-        const htmlMatch = $.match(/;\}\('(.*;)',(\d*),(\d*),'(.*)'\['/)!
-        let tmp = ""
+        const htmlMatch = $.html().match(/;\}\('(.*;)',(\d*),(\d*),'(.*)'\['/)!
+        let tmp = ''
         if (htmlMatch !== undefined && htmlMatch[1] !== undefined && htmlMatch[2] !== undefined && htmlMatch[3] !== undefined && htmlMatch[4] !== undefined)
             tmp = this.decode(htmlMatch[1], htmlMatch[2], htmlMatch[3], LZString.decompressFromBase64(htmlMatch[4])?.split('|'))
         const jsonStr = tmp.substring(12, tmp.length - 12)
