@@ -1,0 +1,54 @@
+{
+  "name": "kpwa-extensions",
+  "version": "1.0.0",
+  "description": "kpwa's extensions",
+  "repositoryName": "kpwa's extensions",
+  "baseURL": "https://kpmulillyc.github.io/extension-kpmuwa/",
+  "sources": [
+    {
+      "name": "ManHuaGui"
+    }
+  ],
+  
+  "main": "index.js",
+  "scripts": {
+    "bundle": "paperback bundle",
+    "serve": "paperback serve",
+    "eslint": "eslint src",
+    "deploy": "gh-pages -d bundles"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kpmulillyc/extension-kpmuwa.git"
+  },
+  "author": "Paperback Community",
+  "license": "GPL-3.0-or-later",
+  "bugs": {
+    "url": "https://github.com/kpmulillyc/extension-kpmuwa/issues"
+  },
+  "homepage": "https://kpmulillyc.github.io/extension-kpmuwa/",
+  "devDependencies": {
+    "@types/chai": "^4.3.1",
+    "@types/chai-as-promised": "^7.1.5",
+    "@types/cheerio": "0.22.21",
+    "@types/jest": "^28.1.4",
+    "@types/lz-string": "^1.3.34",
+    "@types/mocha": "^7.0.2",
+    "@typescript-eslint/eslint-plugin": "^5.30.7",
+    "@typescript-eslint/parser": "^5.30.7",
+    "eslint": "^7.27.0",
+    "eslint-plugin-modules-newline": "^0.0.6",
+    "mocha": "^7.2.0",
+    "typescript": "^4.7.2"
+  },
+  "dependencies": {
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "lz-string": "^1.4.4",
+	"gh-pages": "^3.2.3",
+    "paperback-cli": "^2.0.0-alpha.13",
+    "paperback-extensions-common": "^4.3.5",
+    "ts-mocha": "^7.0.0",
+    "typescript": "^3.9.6"
+  }
+}
