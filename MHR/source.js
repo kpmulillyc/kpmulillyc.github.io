@@ -1333,7 +1333,6 @@ class MHR extends paperback_extensions_common_1.Source {
                     throw new Error('Requested to getViewMoreItems for a section ID which doesn\'t exist');
             }
             homePageUrl = this.helper.urlBuilder(homePageUrl, params);
-            console.log(homePageUrl);
             const request = createRequestObject({
                 url: homePageUrl,
                 method: 'GET'
@@ -1345,6 +1344,34 @@ class MHR extends paperback_extensions_common_1.Source {
                 results: manga,
                 metadata
             });
+        });
+    }
+    filterUpdatedManga(mangaUpdatesFoundCallback, time, ids) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let page = 0;
+            console.log(time);
+            let updatedManga = {
+                ids: [],
+                loadMore: true
+            };
+            let updateUrl = `${this.baseUrl}/v2/manga/getCategoryMangas?`;
+            const parmas = this.helper.homePageParamBuilder();
+            parmas["sort"] = 1;
+            parmas["start"] = page.toString();
+            updateUrl = this.helper.urlBuilder(updateUrl, parmas);
+            while (updatedManga.loadMore) {
+                const request = createRequestObject({
+                    url: updateUrl,
+                    method: 'GET',
+                });
+                const response = yield this.requestManager.schedule(request, 1);
+                updatedManga = this.parser.parseUpdatedManga(response.data, ids);
+                if (updatedManga.ids.length > 0) {
+                    mangaUpdatesFoundCallback(createMangaUpdates({
+                        ids: updatedManga.ids
+                    }));
+                }
+            }
         });
     }
 }
@@ -1425,6 +1452,24 @@ const paperback_extensions_common_1 = require("paperback-extensions-common");
 const OpenCC = require('opencc-js');
 const converter = OpenCC.Converter({ from: 'cn', to: 'hk' });
 class Parser {
+    constructor() {
+        this.parseUpdatedManga = ($, ids) => {
+            const updatedManga = [];
+            let loadMore = true;
+            const parsedData = JSON.parse($).response;
+            parsedData.mangas.forEach((obj) => {
+                if (obj.mangaIsNewest.toString() === "1")
+                    if (ids.includes(obj.mangaId.toString()))
+                        updatedManga.push(obj.mangaId.toString());
+                    else
+                        loadMore = false;
+            });
+            return {
+                ids: updatedManga,
+                loadMore
+            };
+        };
+    }
     parseMangaDetails($, mangaId) {
         const parsedData = JSON.parse($).response;
         const desc = converter(parsedData.mangaIntro);
