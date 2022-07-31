@@ -12,9 +12,10 @@ import {
     ContentRating,
     HomeSectionType,
     MangaTile,
+    MangaUpdates,
 } from "paperback-extensions-common"
 import { MHRHelper } from "./MHRHelper"
-import { Parser, } from './MHRParser'
+import { Parser, UpdatedManga, } from './MHRParser'
 
 export const MHR_DOMAIN = 'https://hk.dm5.com'
 
@@ -242,8 +243,6 @@ export class MHR extends Source {
                 throw new Error('Requested to getViewMoreItems for a section ID which doesn\'t exist')
         }
         homePageUrl = this.helper.urlBuilder(homePageUrl, params)
-console.log(homePageUrl);
-
         const request = createRequestObject({
             url: homePageUrl,
             method: 'GET'
@@ -258,4 +257,36 @@ console.log(homePageUrl);
         })
     }
 
+
+    override async filterUpdatedManga(mangaUpdatesFoundCallback: (updates: MangaUpdates) => void, time: Date, ids: string[]): Promise<void> {
+        let page = 0
+        console.log(time);
+        
+        let updatedManga: UpdatedManga = {
+            ids: [],
+            loadMore: true
+        }
+        let updateUrl = `${this.baseUrl}/v2/manga/getCategoryMangas?`
+        const parmas: any = this.helper.homePageParamBuilder()
+        parmas["sort"] = 1
+        parmas["start"] = page.toString()
+        updateUrl = this.helper.urlBuilder(updateUrl, parmas)
+        while (updatedManga.loadMore) {
+            const request = createRequestObject({
+                url: updateUrl,
+                method: 'GET',
+            })
+
+            const response = await this.requestManager.schedule(request, 1)
+
+            updatedManga = this.parser.parseUpdatedManga(response.data, ids)
+
+            if (updatedManga.ids.length > 0) {
+                mangaUpdatesFoundCallback(createMangaUpdates({
+                    ids: updatedManga.ids
+                }))
+            }
+        }
+
+    }
 }

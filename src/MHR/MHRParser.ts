@@ -6,6 +6,11 @@ const OpenCC = require('opencc-js');
 
 const converter = OpenCC.Converter({ from: 'cn', to: 'hk' });
 
+export interface UpdatedManga {
+    ids: string[];
+    loadMore: boolean;
+}
+
 export class Parser {
 
     parseMangaDetails($: any, mangaId: string): Manga {
@@ -36,6 +41,24 @@ export class Parser {
             covers,
             langFlag
         })
+    }
+
+
+    parseUpdatedManga = ($: any,  ids: string[]): UpdatedManga => {
+        const updatedManga: string[] = []
+        let loadMore = true
+        const parsedData = JSON.parse($).response
+        parsedData.mangas.forEach((obj: any) => {
+            if (obj.mangaIsNewest.toString() === "1")
+                if (ids.includes(obj.mangaId.toString()))
+                    updatedManga.push(obj.mangaId.toString())
+                else
+                    loadMore = false
+        });
+        return {
+            ids: updatedManga,
+            loadMore
+        }
     }
 
     mangaStatus(status: any) {
