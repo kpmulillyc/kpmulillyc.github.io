@@ -8,16 +8,16 @@ export class Parser {
 
     parseMangaDetails($: any, mangaId: string): Manga {
         const parsedData = JSON.parse($).response
-        const desc = parsedData.mangaIntro.toString()
+        const desc = parsedData.mangaIntro
         const status = this.mangaStatus(parsedData.mangaIsOver)
-        const author = parsedData.mangaAuthor.toString()
-        const titles = parsedData.mangaName.toString()
-        const image = parsedData.mangaPicimageUrl.toString()
+        const author = parsedData.mangaAuthor
+        const titles = parsedData.mangaName
+        const image = parsedData.mangaPicimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
         const rating = parsedData.mangaGrade
         const tags = parsedData.mangaTheme
         const views = parsedData.mangaHot
         const lastUpdate = parsedData.mangaNewestTime
-        const covers = parsedData.mangaCoverimageUrl
+        const covers = parsedData.mangaCoverimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
         const langFlag = LanguageCode.CHINEESE_HONGKONG
         return createManga({
             id: mangaId,
@@ -93,7 +93,7 @@ export class Parser {
         for (let obj of parsedData.response.result) {
             const id: string = obj.mangaId.toString()
             const title = createIconText({ text: obj.mangaName })
-            const image = obj.mangaCoverimageUrl.toString()
+            const image = obj.mangaCoverimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
             result.push(createMangaTile({
                 id: id,
                 title: title,
@@ -126,7 +126,7 @@ export class Parser {
         parsedData.mangas.forEach((obj: any) => {
             const id: string = obj.mangaId.toString()
             const title = createIconText({ text: obj.mangaName })
-            const image = obj.mangaCoverimageUrl.toString()
+            const image = obj.mangaCoverimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
             tiles.push(createMangaTile({
                 id: id,
                 title: title,
@@ -136,4 +136,27 @@ export class Parser {
         return tiles
     }
 
+
+    parseViewMore($: any): MangaTile[] {
+        const tiles: MangaTile[] = []
+        const parsedData = JSON.parse($).response
+        parsedData.mangas.forEach((obj: any) => {
+            const id: string = obj.mangaId.toString()
+            const title = createIconText({ text: obj.mangaName })
+            const image = obj.mangaCoverimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
+            tiles.push(createMangaTile({
+                id: id,
+                title: title,
+                image: image
+            }))
+        });
+        return tiles
+    }
+
+    isLastPage($: any, home: boolean) {
+        const parsedData = JSON.parse($).response
+        if (home)
+            return parsedData.mangas.length === 20 ? false : true
+        return parsedData.result.length === 20 ? false : true
+    }
 }

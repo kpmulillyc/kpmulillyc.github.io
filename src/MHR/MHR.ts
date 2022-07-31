@@ -109,11 +109,12 @@ export class MHR extends Source {
     }
 
     async getSearchResults(query: SearchRequest, metadata: any,): Promise<PagedResults> {
-        let page: number = metadata?.page ?? 1
+        if (metadata?.completed) return metadata
+        const page: number = metadata?.page ?? 0
         let searchUrl = this.baseUrl + "/v1/search/getSearchManga?"
         let params: any = this.helper.paramBuilder()
         if (query.title) {
-            params["start"] = "0"
+            params["start"] = page.toString()
             params["limit"] = "20"
             params["keywords"] = query.title
         }
@@ -125,10 +126,11 @@ export class MHR extends Source {
         })
 
         let data = await this.requestManager.schedule(request, 1)
+        metadata = !this.parser.isLastPage(data.data, false) ? { page: page + 20 } : undefined
         const tiles: MangaTile[] = this.parser.parseSearchResult(data.data)
         return createPagedResults({
             results: tiles,
-            metadata: page
+            metadata: metadata
         })
 
     }
@@ -137,13 +139,17 @@ export class MHR extends Source {
 
         let homePageUrl = `${this.baseUrl}/v2/manga/getCategoryMangas?`
 
-        const popularParams = this.helper.homePageParamBuilder()
-        const lastUpdateParams:any = this.helper.homePageParamBuilder()
-        const hotNewParams:any = this.helper.homePageParamBuilder()
-        const hotEndParams:any = this.helper.homePageParamBuilder()
+        const popularParams: any = this.helper.homePageParamBuilder()
+        const lastUpdateParams: any = this.helper.homePageParamBuilder()
+        const hotNewParams: any = this.helper.homePageParamBuilder()
+        const hotEndParams: any = this.helper.homePageParamBuilder()
         lastUpdateParams["sort"] = "1"
         hotNewParams["sort"] = "2"
         hotEndParams["sort"] = "3"
+        popularParams["limit"] = "20"
+        lastUpdateParams["limit"] = "5"
+        hotNewParams["limit"] = "5"
+        hotEndParams["limit"] = "5"
         const popularUrl = this.helper.urlBuilder(homePageUrl, popularParams)
         const lastUpdateUrl = this.helper.urlBuilder(homePageUrl, lastUpdateParams)
         const hotNewUrl = this.helper.urlBuilder(homePageUrl, hotNewParams)
@@ -156,9 +162,9 @@ export class MHR extends Source {
                     method: 'GET'
                 }),
                 section: createHomeSection({
-                    id: '0',
+                    id: 'popular',
                     title: '熱門',
-                    view_more: false,
+                    view_more: true,
                     type: HomeSectionType.singleRowLarge
                 }),
             },
@@ -168,7 +174,7 @@ export class MHR extends Source {
                     method: 'GET'
                 }),
                 section: createHomeSection({
-                    id: '1',
+                    id: 'updates',
                     title: '最近更新',
                     view_more: true,
                     type: HomeSectionType.singleRowNormal
@@ -180,7 +186,7 @@ export class MHR extends Source {
                     method: 'GET'
                 }),
                 section: createHomeSection({
-                    id: '2',
+                    id: 'hotNew',
                     title: '熱門新作',
                     view_more: true,
                     type: HomeSectionType.singleRowNormal
@@ -192,7 +198,7 @@ export class MHR extends Source {
                     method: 'GET'
                 }),
                 section: createHomeSection({
-                    id: '3',
+                    id: 'hotEnd',
                     title: '熱門完結',
                     view_more: true,
                     type: HomeSectionType.singleRowNormal
@@ -213,4 +219,45 @@ export class MHR extends Source {
 
         await Promise.all(promises)
     }
+
+    override async getViewMoreItems(homepageSectionId: string, metadata: any): Promise<PagedResults> {
+        if (metadata?.completed) return metadata
+
+        const page: number = metadata?.page ?? 0
+        let homePageUrl = `${this.baseUrl}/v2/manga/getCategoryMangas?`
+        const params: any = this.helper.homePageParamBuilder()
+        params["start"] = page.toString()
+        switch (homepageSectionId) {
+            case "popular":
+                params["sort"] = 0
+                break
+            case "updates":
+                params["sort"] = 1
+                break
+            case "hotNew":
+                params["sort"] = 2
+                break
+            case "hotEnd":
+                params["sort"] = 3
+                break
+            default:
+                throw new Error('Requested to getViewMoreItems for a section ID which doesn\'t exist')
+        }
+        homePageUrl = this.helper.urlBuilder(homePageUrl, params)
+console.log(homePageUrl);
+
+        const request = createRequestObject({
+            url: homePageUrl,
+            method: 'GET'
+        })
+
+        const response = await this.requestManager.schedule(request, 1)
+        const manga = this.parser.parseViewMore(response.data)
+        metadata = !this.parser.isLastPage(response.data, true) ? { page: page + 20 } : undefined
+        return createPagedResults({
+            results: manga,
+            metadata
+        })
+    }
+
 }
