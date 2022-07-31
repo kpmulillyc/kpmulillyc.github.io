@@ -53,8 +53,6 @@ export class MHR extends Source {
             }
         }
     })
-
-
     baseUrl: string = "http://mangaapi.manhuaren.com"
     parser = new Parser()
     helper = new MHRHelper()

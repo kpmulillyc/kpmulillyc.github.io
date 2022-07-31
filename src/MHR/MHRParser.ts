@@ -44,15 +44,15 @@ export class Parser {
     parseChapterList($: any, mangaId: string): Chapter[] {
         const parsedData = JSON.parse($).response
         const chapters: Chapter[] = []
-        let chapNum = 1
         parsedData.mangaWords.forEach((obj: any) => {
             const id = obj.sectionId.toString()
-            const name = `${obj.sectionName} ${obj.sectionTitle}`
+            const name = this.getChapterName("mangaWords", obj.sectionName, obj.sectionTitle)
             const time: Date = new Date(obj.releaseTime)
+            const chapNum = parseFloat(obj.sectionSort)
             chapters.push(createChapter({
                 id,
                 mangaId,
-                chapNum: chapNum++,
+                chapNum,
                 langCode: LanguageCode.CHINEESE_HONGKONG,
                 name,
                 time
@@ -60,12 +60,13 @@ export class Parser {
         });
         parsedData.mangaRolls.forEach((obj: any) => {
             const id = obj.sectionId.toString()
-            const name = `${obj.sectionName} ${obj.sectionTitle}`
+            const name = this.getChapterName("mangaRolls", obj.sectionName, obj.sectionTitle)
             const time: Date = new Date(obj.releaseTime)
+            const chapNum = parseFloat(obj.sectionSort)
             chapters.push(createChapter({
                 id,
                 mangaId,
-                chapNum: chapNum++,
+                chapNum,
                 langCode: LanguageCode.CHINEESE_HONGKONG,
                 name,
                 time
@@ -73,12 +74,13 @@ export class Parser {
         });
         parsedData.mangaEpisode.forEach((obj: any) => {
             const id = obj.sectionId.toString()
-            const name = `${obj.sectionName} ${obj.sectionTitle}`
+            const name = this.getChapterName("mangaEpisode", obj.sectionName, obj.sectionTitle)
             const time: Date = new Date(obj.releaseTime)
+            const chapNum = parseFloat(obj.sectionSort)
             chapters.push(createChapter({
                 id,
                 mangaId,
-                chapNum: chapNum++,
+                chapNum,
                 langCode: LanguageCode.CHINEESE_HONGKONG,
                 name,
                 time
@@ -151,6 +153,14 @@ export class Parser {
             }))
         });
         return tiles
+    }
+
+    getChapterName(type: string, name: string, title: string): string {
+        let final = ""
+        final += type == "mangaEpisode" ? "[番外] " : ""
+        final += name
+        final += title == "" ? "" : title
+        return final
     }
 
     isLastPage($: any, home: boolean) {
