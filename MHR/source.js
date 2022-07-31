@@ -1140,15 +1140,15 @@ class Parser {
     parseChapterList($, mangaId) {
         const parsedData = JSON.parse($).response;
         const chapters = [];
-        let chapNum = 1;
         parsedData.mangaWords.forEach((obj) => {
             const id = obj.sectionId.toString();
-            const name = `${obj.sectionName} ${obj.sectionTitle}`;
+            const name = this.getChapterName("mangaWords", obj.sectionName, obj.sectionTitle);
             const time = new Date(obj.releaseTime);
+            const chapNum = parseFloat(obj.sectionSort);
             chapters.push(createChapter({
                 id,
                 mangaId,
-                chapNum: chapNum++,
+                chapNum,
                 langCode: paperback_extensions_common_1.LanguageCode.CHINEESE_HONGKONG,
                 name,
                 time
@@ -1156,12 +1156,13 @@ class Parser {
         });
         parsedData.mangaRolls.forEach((obj) => {
             const id = obj.sectionId.toString();
-            const name = `${obj.sectionName} ${obj.sectionTitle}`;
+            const name = this.getChapterName("mangaRolls", obj.sectionName, obj.sectionTitle);
             const time = new Date(obj.releaseTime);
+            const chapNum = parseFloat(obj.sectionSort);
             chapters.push(createChapter({
                 id,
                 mangaId,
-                chapNum: chapNum++,
+                chapNum,
                 langCode: paperback_extensions_common_1.LanguageCode.CHINEESE_HONGKONG,
                 name,
                 time
@@ -1169,12 +1170,13 @@ class Parser {
         });
         parsedData.mangaEpisode.forEach((obj) => {
             const id = obj.sectionId.toString();
-            const name = `${obj.sectionName} ${obj.sectionTitle}`;
+            const name = this.getChapterName("mangaEpisode", obj.sectionName, obj.sectionTitle);
             const time = new Date(obj.releaseTime);
+            const chapNum = parseFloat(obj.sectionSort);
             chapters.push(createChapter({
                 id,
                 mangaId,
-                chapNum: chapNum++,
+                chapNum,
                 langCode: paperback_extensions_common_1.LanguageCode.CHINEESE_HONGKONG,
                 name,
                 time
@@ -1241,6 +1243,13 @@ class Parser {
             }));
         });
         return tiles;
+    }
+    getChapterName(type, name, title) {
+        let final = "";
+        final += type == "mangaEpisode" ? "[番外] " : "";
+        final += name;
+        final += title == "" ? "" : title;
+        return final;
     }
     isLastPage($, home) {
         const parsedData = JSON.parse($).response;
