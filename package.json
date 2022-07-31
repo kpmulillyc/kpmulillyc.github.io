@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "kpwa's extensions",
   "repositoryName": "kpwa's extensions",
-  "baseURL": "https://kpmulillyc.github.io/extension-kpmuwa/",
+  "baseURL": "https://kpmulillyc.github.io/",
   "main": "index.js",
   "scripts": {
     "bundle": "paperback bundle",
@@ -12,14 +12,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/kpmulillyc/extension-kpmuwa.git"
+    "url": "git+https://github.com/kpmulillyc/kpmulillyc.github.io.git"
   },
   "author": "Paperback Community",
   "license": "GPL-3.0-or-later",
   "bugs": {
-    "url": "https://github.com/kpmulillyc/extension-kpmuwa/issues"
+    "url": "https://github.com/kpmulillyc/kpmulillyc.github.io/issues"
   },
-  "homepage": "https://kpmulillyc.github.io/extension-kpmuwa/",
+  "homepage": "https://kpmulillyc.github.io/",
   "devDependencies": {
     "@types/chai": "^4.2.21",
     "@types/chai-as-promised": "^7.1.4",
