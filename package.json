@@ -4,11 +4,6 @@
   "description": "kpwa's extensions",
   "repositoryName": "kpwa's extensions",
   "baseURL": "https://kpmulillyc.github.io/extension-kpmuwa/",
-  "sources": [
-    {
-      "name": "ManHuaRen"
-    }
-  ],
   "main": "index.js",
   "scripts": {
     "bundle": "paperback bundle",
