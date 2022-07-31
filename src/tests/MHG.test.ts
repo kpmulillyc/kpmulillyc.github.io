@@ -20,7 +20,7 @@ describe('MHR Tests', () => {
      * Try to choose a manga which is updated frequently, so that the historical checking test can 
      * return proper results, as it is limited to searching 30 days back due to extremely long processing times otherwise.
      */
-    const mangaId = '/manhua-yiquanchaoren/'
+    // const mangaId = '18071'
 
     // it('Retrieve Manga Details', async () => {
     //     const details = await wrapper.getMangaDetails(source, mangaId)
@@ -33,10 +33,9 @@ describe('MHR Tests', () => {
     //     expect(data.author, 'Missing Author').to.be.not.empty
     //     expect(data.desc, 'Missing Description').to.be.not.empty
     //     expect(data.titles, 'Missing Titles').to.be.not.empty
-    //     // expect(data.rating, 'Missing Rating').to.exist
+    //     expect(data.rating, 'Missing Rating').to.exist
     // })
-
-    // it('Get Chapters', async () => {
+    //   it('Get Chapters', async () => {
     //     const data = await wrapper.getChapters(source, mangaId)
 
     //     expect(data, 'No chapters present for: [' + mangaId + ']').to.not.be.empty
@@ -45,22 +44,22 @@ describe('MHR Tests', () => {
     //     expect(entry?.id, 'No ID present').to.not.be.empty
     //     expect(entry?.mangaId, 'MangaId Changed').to.be.eql(mangaId)
     //     // expect(entry?.time, 'No date present').to.exist
-    //     expect(entry.name, "No title available").to.not.be.empty
+    //     expect(entry?.name, "No title available").to.not.be.empty
     //     expect(entry?.chapNum, 'No chapter number present').to.exist
     // })
+    
+    // it('Get Chapter Details', async () => {
 
-    it('Get Chapter Details', async () => {
+    //     const chapters = await wrapper.getChapters(source, mangaId)
+    //     const data = await wrapper.getChapterDetails(source, mangaId, chapters[0]?.id ?? 'unknown')
 
-        const chapters = await wrapper.getChapters(source, mangaId)
-        const data = await wrapper.getChapterDetails(source, mangaId, chapters[0]?.id ?? 'unknown')
+    //     expect(data, 'No server response').to.exist
+    //     expect(data, 'Empty server response').to.not.be.empty
 
-        expect(data, 'No server response').to.exist
-        expect(data, 'Empty server response').to.not.be.empty
-
-        expect(data.id, 'Missing ID').to.be.not.empty
-        expect(data.mangaId, 'Missing MangaID').to.be.not.empty
-        expect(data.pages, 'No pages present').to.be.not.empty
-    })
+    //     expect(data.id, 'Missing ID').to.be.not.empty
+    //     expect(data.mangaId, 'Missing MangaID').to.be.not.empty
+    //     expect(data.pages, 'No pages present').to.be.not.empty
+    // })
 
     // it('Testing search', async () => {
     //     const testSearch: SearchRequest = {
@@ -79,10 +78,10 @@ describe('MHR Tests', () => {
     //     expect(result?.subtitleText, 'No subtitle text').to.be.not.null
     // })
 
-    // it('Testing Home-Page aquisition', async () => {
-    //     const homePages = await wrapper.getHomePageSections(source)
-    //     expect(homePages, 'No response from server').to.exist
-    //     expect(homePages[0], 'No latest updates section available').to.exist
-    //     expect(homePages[1], 'No hot section available').to.exist
-    // })
+    it('Testing Home-Page aquisition', async () => {
+        const homePages = await wrapper.getHomePageSections(source)
+        expect(homePages, 'No response from server').to.exist
+        expect(homePages[0], 'No latest updates section available').to.exist
+        expect(homePages[1], 'No hot section available').to.exist
+    })
 })
