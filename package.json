@@ -32,6 +32,8 @@
     "chai": "^4.3.4",
     "chai-as-promised": "^7.1.1",
     "eslint": "^7.27.0",
+    "opencc-js": "^1.0.4",
+    "@types/opencc-js": "^1.0.0",
     "eslint-plugin-modules-newline": "^0.0.6",
     "mocha": "^9.1.1",
     "typescript": "^4.3.2"

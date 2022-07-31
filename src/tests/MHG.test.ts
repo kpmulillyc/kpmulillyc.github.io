@@ -1,7 +1,7 @@
 import cheerio from 'cheerio'
 import {
     APIWrapper,
-    // SearchRequest,
+    SearchRequest,
     Source
 } from 'paperback-extensions-common'
 import { MHR } from '../MHR/MHR'
@@ -22,19 +22,19 @@ describe('MHR Tests', () => {
      */
     const mangaId = '18071'
 
-    // it('Retrieve Manga Details', async () => {
-    //     const details = await wrapper.getMangaDetails(source, mangaId)
-    //     expect(details, 'No results found with test-defined ID [' + mangaId + ']').to.exist
+    it('Retrieve Manga Details', async () => {
+        const details = await wrapper.getMangaDetails(source, mangaId)
+        expect(details, 'No results found with test-defined ID [' + mangaId + ']').to.exist
 
-    //     // Validate that the fields are filled
-    //     const data = details
-    //     expect(data.image, 'Missing Image').to.be.not.empty
-    //     expect(data.status, 'Missing Status').to.exist
-    //     expect(data.author, 'Missing Author').to.be.not.empty
-    //     expect(data.desc, 'Missing Description').to.be.not.empty
-    //     expect(data.titles, 'Missing Titles').to.be.not.empty
-    //     expect(data.rating, 'Missing Rating').to.exist
-    // })
+        // Validate that the fields are filled
+        const data = details
+        expect(data.image, 'Missing Image').to.be.not.empty
+        expect(data.status, 'Missing Status').to.exist
+        expect(data.author, 'Missing Author').to.be.not.empty
+        expect(data.desc, 'Missing Description').to.be.not.empty
+        expect(data.titles, 'Missing Titles').to.be.not.empty
+        expect(data.rating, 'Missing Rating').to.exist
+    })
       it('Get Chapters', async () => {
         const data = await wrapper.getChapters(source, mangaId)
 
@@ -48,40 +48,40 @@ describe('MHR Tests', () => {
         expect(entry?.chapNum, 'No chapter number present').to.exist
     })
     
-    // it('Get Chapter Details', async () => {
+    it('Get Chapter Details', async () => {
 
-    //     const chapters = await wrapper.getChapters(source, mangaId)
-    //     const data = await wrapper.getChapterDetails(source, mangaId, chapters[0]?.id ?? 'unknown')
+        const chapters = await wrapper.getChapters(source, mangaId)
+        const data = await wrapper.getChapterDetails(source, mangaId, chapters[0]?.id ?? 'unknown')
 
-    //     expect(data, 'No server response').to.exist
-    //     expect(data, 'Empty server response').to.not.be.empty
+        expect(data, 'No server response').to.exist
+        expect(data, 'Empty server response').to.not.be.empty
 
-    //     expect(data.id, 'Missing ID').to.be.not.empty
-    //     expect(data.mangaId, 'Missing MangaID').to.be.not.empty
-    //     expect(data.pages, 'No pages present').to.be.not.empty
-    // })
+        expect(data.id, 'Missing ID').to.be.not.empty
+        expect(data.mangaId, 'Missing MangaID').to.be.not.empty
+        expect(data.pages, 'No pages present').to.be.not.empty
+    })
 
-    // it('Testing search', async () => {
-    //     const testSearch: SearchRequest = {
-    //         title: '海贼王',
-    //         parameters: {},
-    //     }
+    it('Testing search', async () => {
+        const testSearch: SearchRequest = {
+            title: '海贼王',
+            parameters: {},
+        }
 
-    //     const search = await wrapper.searchRequest(source, testSearch, { offset: 0 })
-    //     const result = search.results[0]
+        const search = await wrapper.searchRequest(source, testSearch, { offset: 0 })
+        const result = search.results[0]
 
-    //     expect(result, 'No response from server').to.exist
+        expect(result, 'No response from server').to.exist
 
-    //     expect(result?.id, 'No ID found for search query').to.be.not.empty
-    //     expect(result?.image, 'No image found for search').to.be.not.empty
-    //     expect(result?.title, 'No title').to.be.not.null
-    //     expect(result?.subtitleText, 'No subtitle text').to.be.not.null
-    // })
+        expect(result?.id, 'No ID found for search query').to.be.not.empty
+        expect(result?.image, 'No image found for search').to.be.not.empty
+        expect(result?.title, 'No title').to.be.not.null
+        expect(result?.subtitleText, 'No subtitle text').to.be.not.null
+    })
 
-    // it('Testing Home-Page aquisition', async () => {
-    //     const homePages = await wrapper.getHomePageSections(source)
-    //     expect(homePages, 'No response from server').to.exist
-    //     expect(homePages[0], 'No latest updates section available').to.exist
-    //     expect(homePages[1], 'No hot section available').to.exist
-    // })
+    it('Testing Home-Page aquisition', async () => {
+        const homePages = await wrapper.getHomePageSections(source)
+        expect(homePages, 'No response from server').to.exist
+        expect(homePages[0], 'No latest updates section available').to.exist
+        expect(homePages[1], 'No hot section available').to.exist
+    })
 })

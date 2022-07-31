@@ -1,20 +1,23 @@
 import {
-    Chapter, ChapterDetails, LanguageCode, Manga, MangaStatus, MangaTile
+    Chapter, ChapterDetails, LanguageCode, Manga, MangaStatus, MangaTile, Tag, TagSection
 } from 'paperback-extensions-common'
 
+const OpenCC = require('opencc-js');
+
+const converter = OpenCC.Converter({ from: 'cn', to: 'hk' });
 
 export class Parser {
 
-
     parseMangaDetails($: any, mangaId: string): Manga {
         const parsedData = JSON.parse($).response
-        const desc = parsedData.mangaIntro
+        const desc = converter(parsedData.mangaIntro)
         const status = this.mangaStatus(parsedData.mangaIsOver)
-        const author = parsedData.mangaAuthor
-        const titles = parsedData.mangaName
+        const author = converter(parsedData.mangaAuthor)
+        const titles = converter(parsedData.mangaName)
         const image = parsedData.mangaPicimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
         const rating = parsedData.mangaGrade
-        const tags = parsedData.mangaTheme
+        const tag: Tag = createTag({ id: '0', label: converter(parsedData.mangaTheme) })
+        const tags: TagSection[] = [createTagSection({ id: "0", label: "tag", tags: [tag] })]
         const views = parsedData.mangaHot
         const lastUpdate = parsedData.mangaNewestTime
         const covers = parsedData.mangaCoverimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
@@ -94,7 +97,7 @@ export class Parser {
         const parsedData = JSON.parse($)
         for (let obj of parsedData.response.result) {
             const id: string = obj.mangaId.toString()
-            const title = createIconText({ text: obj.mangaName })
+            const title = createIconText({ text: converter(obj.mangaName) })
             const image = obj.mangaCoverimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
             result.push(createMangaTile({
                 id: id,
@@ -127,7 +130,7 @@ export class Parser {
         const parsedData = JSON.parse($).response
         parsedData.mangas.forEach((obj: any) => {
             const id: string = obj.mangaId.toString()
-            const title = createIconText({ text: obj.mangaName })
+            const title = createIconText({ text: converter(obj.mangaName) })
             const image = obj.mangaCoverimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
             tiles.push(createMangaTile({
                 id: id,
@@ -144,7 +147,7 @@ export class Parser {
         const parsedData = JSON.parse($).response
         parsedData.mangas.forEach((obj: any) => {
             const id: string = obj.mangaId.toString()
-            const title = createIconText({ text: obj.mangaName })
+            const title = createIconText({ text: converter(obj.mangaName) })
             const image = obj.mangaCoverimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
             tiles.push(createMangaTile({
                 id: id,
@@ -158,8 +161,8 @@ export class Parser {
     getChapterName(type: string, name: string, title: string): string {
         let final = ""
         final += type == "mangaEpisode" ? "[番外] " : ""
-        final += name
-        final += title == "" ? "" : title
+        final += converter(name)
+        final += title == "" ? "" : converter(title)
         return final
     }
 
