@@ -1117,7 +1117,7 @@ const MHRHelper_1 = require("./MHRHelper");
 const MHRParser_1 = require("./MHRParser");
 exports.MHR_DOMAIN = 'https://hk.dm5.com';
 exports.MHRInfo = {
-    version: '1.4.0',
+    version: '1.4.1',
     name: '漫畫人',
     description: '漫畫人',
     author: 'kpwa',
@@ -1620,12 +1620,10 @@ class Parser {
         for (let obj of parsedData.response.result) {
             const id = obj.mangaId.toString();
             const title = createIconText({ text: converter(obj.mangaName) });
-            const image = obj.mangaPicimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg";
-            const subtitle = converter(obj.mangaNewestContent);
+            const image = obj.mangaCoverimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg";
             result.push(createMangaTile({
                 id: id,
                 title: title,
-                subtitleText: createIconText({ text: subtitle }),
                 image: image
             }));
         }
