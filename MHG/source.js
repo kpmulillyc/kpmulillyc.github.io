@@ -3033,6 +3033,15 @@ class MHG extends paperback_extensions_common_1.Source {
             this.parser.parseHomeSections($, sectionCallback);
         });
     }
+    getCloudflareBypassRequest() {
+        return createRequestObject({
+            url: MHG_DOMAIN,
+            method: 'GET',
+            headers: {
+                'user-agent': userAgent
+            }
+        });
+    }
 }
 exports.MHG = MHG;
 
