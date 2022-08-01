@@ -23,10 +23,10 @@ export class Parser {
         const rating = parsedData.mangaGrade
 
         const tagArray: Tag[] = []
-        let tagId=1
+        let tagId = 1
         const genres = converter(parsedData.mangaTheme)
-        genres.split(' ').forEach((tag:any) => {
-            tagArray.push({id:tagId.toString(),label:tag})
+        genres.split(' ').forEach((tag: any) => {
+            tagArray.push({ id: tagId.toString(), label: tag })
             tagId++
         });
         const tags: TagSection[] = [createTagSection({ id: "0", label: "genres", tags: tagArray.map(x => createTag(x)) })]
@@ -121,7 +121,7 @@ export class Parser {
             const id: string = obj.mangaId.toString()
             const title = createIconText({ text: converter(obj.mangaName) })
             const image = obj.mangaPicimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg"
-            const subtitle = obj.mangaNewestContent
+            const subtitle = converter(obj.mangaNewestContent)
             result.push(createMangaTile({
                 id: id,
                 title: title,
@@ -148,6 +148,48 @@ export class Parser {
         })
     }
 
+    parseTags = (): TagSection[] | null => {
+        const arrayTags: Tag[] = []
+        arrayTags.push({ id: "031", label: "熱血" })
+        arrayTags.push({ id: "026", label: "戀愛" })
+        arrayTags.push({ id: "01", label: "校園" })
+        arrayTags.push({ id: "03", label: "百合" })
+        arrayTags.push({ id: "027", label: "耽美" })
+        arrayTags.push({ id: "05", label: "偽娘" })
+        arrayTags.push({ id: "02", label: "冒險" })
+        arrayTags.push({ id: "06", label: "職場" })
+        arrayTags.push({ id: "08", label: "後宮" })
+        arrayTags.push({ id: "09", label: "治愈" })
+        arrayTags.push({ id: "025", label: "科幻" })
+        arrayTags.push({ id: "010", label: "勵志" })
+        arrayTags.push({ id: "011", label: "生活" })
+        arrayTags.push({ id: "012", label: "戰爭" })
+        arrayTags.push({ id: "017", label: "懸疑" })
+        arrayTags.push({ id: "033", label: "推理" })
+        arrayTags.push({ id: "037", label: "搞笑" })
+        arrayTags.push({ id: "014", label: "奇幻" })
+        arrayTags.push({ id: "015", label: "魔法" })
+        arrayTags.push({ id: "029", label: "恐怖" })
+        arrayTags.push({ id: "020", label: "神鬼" })
+        arrayTags.push({ id: "021", label: "萌系" })
+        arrayTags.push({ id: "04", label: "歷史" })
+        arrayTags.push({ id: "07", label: "美食" })
+        arrayTags.push({ id: "030", label: "同人" })
+        arrayTags.push({ id: "034", label: "運動" })
+        arrayTags.push({ id: "036", label: "紳士" })
+        arrayTags.push({ id: "040", label: "機甲" })
+        arrayTags.push({ id: "235", label: "港台" })
+        arrayTags.push({ id: "236", label: "日韓" })
+        arrayTags.push({ id: "237", label: "大陸" })
+        arrayTags.push({ id: "252", label: "歐美" })
+        arrayTags.push({ id: "061", label: "限制級" })
+        arrayTags.push({ id: "11", label: "少年向" })
+        arrayTags.push({ id: "12", label: "少女向" })
+        arrayTags.push({ id: "13", label: "青年向" })
+        const tagSections: TagSection[] = [createTagSection({ id: '0', label: '分頪', tags: arrayTags.map(x => createTag(x)) })]
+        return tagSections
+    }
+
 
     parseHomeSection($: any): MangaTile[] {
         const tiles: MangaTile[] = []
@@ -156,7 +198,7 @@ export class Parser {
             const id: string = obj.mangaId.toString()
             const title = createIconText({ text: converter(obj.mangaName) })
             const image = obj.mangaPicimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg"
-            const subtitle = obj.mangaNewestContent
+            const subtitle = converter(obj.mangaNewestContent)
             tiles.push(createMangaTile({
                 id: id,
                 title: title,
@@ -175,7 +217,7 @@ export class Parser {
             const id: string = obj.mangaId.toString()
             const title = createIconText({ text: converter(obj.mangaName) })
             const image = obj.mangaPicimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg"
-            const subtitle = obj.mangaNewestContent
+            const subtitle = converter(obj.mangaNewestContent)
             tiles.push(createMangaTile({
                 id: id,
                 title: title,

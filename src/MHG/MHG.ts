@@ -140,6 +140,15 @@ export class MHG extends Source {
         const $ = this.cheerio.load(response.data ?? response['fixedData'])
         this.parser.parseHomeSections($, sectionCallback)
     }
+    override getCloudflareBypassRequest(): Request {
+        return createRequestObject({
+            url: MHG_DOMAIN,
+            method: 'GET',
+            headers: {
+                'user-agent': userAgent
+            }
+        })
+    }
 }
 export interface MHGResponse extends Response {
     fixedData: string;

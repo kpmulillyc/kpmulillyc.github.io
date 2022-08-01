@@ -14,6 +14,7 @@ import {
     MangaTile,
     MangaUpdates,
     TagType,
+    TagSection,
 } from "paperback-extensions-common"
 import { MHRHelper } from "./MHRHelper"
 import { Parser } from './MHRParser'
@@ -21,14 +22,14 @@ import { Parser } from './MHRParser'
 export const MHR_DOMAIN = 'https://hk.dm5.com'
 
 export const MHRInfo: SourceInfo = {
-    version: '1.3.0',
+    version: '1.4.0',
     name: '漫畫人',
     description: '漫畫人',
     author: 'kpwa',
     authorWebsite: 'https://github.com/kpmulillyc',
     icon: "favicon.ico",
     websiteBaseURL: MHR_DOMAIN,
-    sourceTags:[
+    sourceTags: [
         {
             text: 'Notifications',
             type: TagType.GREEN
@@ -36,7 +37,6 @@ export const MHRInfo: SourceInfo = {
     ],
     contentRating: ContentRating.EVERYONE,
 }
-export const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:103.0) Gecko/20100101 Firefox/103.0'
 
 export class MHR extends Source {
 
@@ -114,6 +114,12 @@ export class MHR extends Source {
         return this.parser.parseChapterDetails(data.data, mangaId, chapterId)
     }
 
+
+    override async getSearchTags(): Promise<TagSection[]> {
+        return this.parser.parseTags() || []
+    }
+
+
     async getSearchResults(query: SearchRequest, metadata: any,): Promise<PagedResults> {
         if (metadata?.completed) return metadata
         const page: number = metadata?.page ?? 0
@@ -123,21 +129,43 @@ export class MHR extends Source {
             params["start"] = page.toString()
             params["limit"] = "20"
             params["keywords"] = query.title
+
+
+            searchUrl = this.helper.urlBuilder(searchUrl, params)
+            let request = createRequestObject({
+                url: searchUrl,
+                method: 'GET'
+            })
+
+            let data = await this.requestManager.schedule(request, 1)
+            metadata = !this.parser.isLastPage(data.data, false) ? { page: page + 20 } : undefined
+            const tiles: MangaTile[] = this.parser.parseSearchResult(data.data)
+            return createPagedResults({
+                results: tiles,
+                metadata: metadata
+            })
+        } else {
+            const queryTag = query?.includedTags?.map((x: any) => x.id)[0]
+            searchUrl = `${this.baseUrl}/v2/manga/getCategoryMangas?`
+            params = this.helper.homePageParamBuilder()
+            params["subCategoryType"] = queryTag.slice(0, 1)
+            params["subCategoryId"] = queryTag.slice(1)
+            params["start"] = page.toString()
+            searchUrl = this.helper.urlBuilder(searchUrl, params)
+            let request = createRequestObject({
+                url: searchUrl,
+                method: 'GET'
+            })
+
+            let data = await this.requestManager.schedule(request, 1)
+            metadata = !this.parser.isLastPage(data.data, true) ? { page: page + 20 } : undefined
+            const tiles: MangaTile[] = this.parser.parseHomeSection(data.data)
+
+            return createPagedResults({
+                results: tiles,
+                metadata: metadata
+            })
         }
-
-        searchUrl = this.helper.urlBuilder(searchUrl, params)
-        let request = createRequestObject({
-            url: searchUrl,
-            method: 'GET'
-        })
-
-        let data = await this.requestManager.schedule(request, 1)
-        metadata = !this.parser.isLastPage(data.data, false) ? { page: page + 20 } : undefined
-        const tiles: MangaTile[] = this.parser.parseSearchResult(data.data)
-        return createPagedResults({
-            results: tiles,
-            metadata: metadata
-        })
 
     }
 
