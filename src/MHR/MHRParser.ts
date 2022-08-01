@@ -19,13 +19,21 @@ export class Parser {
         const status = this.mangaStatus(parsedData.mangaIsOver)
         const author = converter(parsedData.mangaAuthor)
         const titles = converter(parsedData.mangaName)
-        const image = parsedData.mangaPicimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
+        const image = parsedData.mangaCoverimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
         const rating = parsedData.mangaGrade
-        const tag: Tag = createTag({ id: '0', label: converter(parsedData.mangaTheme) })
-        const tags: TagSection[] = [createTagSection({ id: "0", label: "tag", tags: [tag] })]
+
+        const tagArray: Tag[] = []
+        let tagId=1
+        const genres = converter(parsedData.mangaTheme)
+        genres.split(' ').forEach((tag:any) => {
+            tagArray.push({id:tagId.toString(),label:tag})
+            tagId++
+        });
+        const tags: TagSection[] = [createTagSection({ id: "0", label: "genres", tags: tagArray.map(x => createTag(x)) })]
+
         const views = parsedData.mangaHot
         const lastUpdate = parsedData.mangaNewestTime
-        const covers = parsedData.mangaCoverimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
+        const covers = parsedData.mangaPicimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
         const langFlag = LanguageCode.CHINEESE_HONGKONG
         return createManga({
             id: mangaId,
@@ -44,22 +52,13 @@ export class Parser {
     }
 
 
-    parseUpdatedManga = ($: any,  ids: string[]): UpdatedManga => {
-        const updatedManga: string[] = []
-        let loadMore = true
+    parseUpdatedManga = ($: any, time: Date, id: string, updatedManga: string[]): void => {
         const parsedData = JSON.parse($).response
-        parsedData.mangas.forEach((obj: any) => {
-            if (obj.mangaIsNewest.toString() === "1")
-                if (ids.includes(obj.mangaId.toString()))
-                    updatedManga.push(obj.mangaId.toString())
-                else
-                    loadMore = false
-        });
-        return {
-            ids: updatedManga,
-            loadMore
-        }
+        const date = new Date(parsedData.mangaNewestTime)
+        if (date > time)
+            updatedManga.push(id)
     }
+
 
     mangaStatus(status: any) {
         if (status == '0') return MangaStatus.ONGOING
@@ -72,7 +71,7 @@ export class Parser {
         const chapters: Chapter[] = []
         parsedData.mangaWords.forEach((obj: any) => {
             const id = obj.sectionId.toString()
-            const name = this.getChapterName("mangaWords", obj.sectionName, obj.sectionTitle)
+            const name = obj.isMustPay == 1 ? "鎖 " : "" + this.getChapterName("mangaWords", obj.sectionName, obj.sectionTitle)
             const time: Date = new Date(obj.releaseTime)
             const chapNum = parseFloat(obj.sectionSort)
             chapters.push(createChapter({
@@ -86,7 +85,7 @@ export class Parser {
         });
         parsedData.mangaRolls.forEach((obj: any) => {
             const id = obj.sectionId.toString()
-            const name = this.getChapterName("mangaRolls", obj.sectionName, obj.sectionTitle)
+            const name = obj.isMustPay == 1 ? "鎖" : "" + this.getChapterName("mangaWords", obj.sectionName, obj.sectionTitle)
             const time: Date = new Date(obj.releaseTime)
             const chapNum = parseFloat(obj.sectionSort)
             chapters.push(createChapter({
@@ -100,7 +99,7 @@ export class Parser {
         });
         parsedData.mangaEpisode.forEach((obj: any) => {
             const id = obj.sectionId.toString()
-            const name = this.getChapterName("mangaEpisode", obj.sectionName, obj.sectionTitle)
+            const name = obj.isMustPay == 1 ? "鎖" : "" + this.getChapterName("mangaWords", obj.sectionName, obj.sectionTitle)
             const time: Date = new Date(obj.releaseTime)
             const chapNum = parseFloat(obj.sectionSort)
             chapters.push(createChapter({
@@ -121,10 +120,12 @@ export class Parser {
         for (let obj of parsedData.response.result) {
             const id: string = obj.mangaId.toString()
             const title = createIconText({ text: converter(obj.mangaName) })
-            const image = obj.mangaCoverimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
+            const image = obj.mangaPicimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg"
+            const subtitle = obj.mangaNewestContent
             result.push(createMangaTile({
                 id: id,
                 title: title,
+                subtitleText: createIconText({ text: subtitle }),
                 image: image
             }))
         }
@@ -154,10 +155,12 @@ export class Parser {
         parsedData.mangas.forEach((obj: any) => {
             const id: string = obj.mangaId.toString()
             const title = createIconText({ text: converter(obj.mangaName) })
-            const image = obj.mangaCoverimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
+            const image = obj.mangaPicimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg"
+            const subtitle = obj.mangaNewestContent
             tiles.push(createMangaTile({
                 id: id,
                 title: title,
+                subtitleText: createIconText({ text: subtitle }),
                 image: image
             }))
         });
@@ -171,10 +174,12 @@ export class Parser {
         parsedData.mangas.forEach((obj: any) => {
             const id: string = obj.mangaId.toString()
             const title = createIconText({ text: converter(obj.mangaName) })
-            const image = obj.mangaCoverimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
+            const image = obj.mangaPicimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg"
+            const subtitle = obj.mangaNewestContent
             tiles.push(createMangaTile({
                 id: id,
                 title: title,
+                subtitleText: createIconText({ text: subtitle }),
                 image: image
             }))
         });

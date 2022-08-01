@@ -13,20 +13,27 @@ import {
     HomeSectionType,
     MangaTile,
     MangaUpdates,
+    TagType,
 } from "paperback-extensions-common"
 import { MHRHelper } from "./MHRHelper"
-import { Parser, UpdatedManga, } from './MHRParser'
+import { Parser } from './MHRParser'
 
 export const MHR_DOMAIN = 'https://hk.dm5.com'
 
 export const MHRInfo: SourceInfo = {
-    version: '1.1.0',
+    version: '1.3.0',
     name: '漫畫人',
     description: '漫畫人',
     author: 'kpwa',
-    authorWebsite: 'https://github.com/kpwa',
+    authorWebsite: 'https://github.com/kpmulillyc',
     icon: "favicon.ico",
     websiteBaseURL: MHR_DOMAIN,
+    sourceTags:[
+        {
+            text: 'Notifications',
+            type: TagType.GREEN
+        }
+    ],
     contentRating: ContentRating.EVERYONE,
 }
 export const userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:103.0) Gecko/20100101 Firefox/103.0'
@@ -164,7 +171,7 @@ export class MHR extends Source {
                     id: 'popular',
                     title: '熱門',
                     view_more: true,
-                    type: HomeSectionType.singleRowLarge
+                    type: HomeSectionType.singleRowNormal
                 }),
             },
             {
@@ -259,34 +266,23 @@ export class MHR extends Source {
 
 
     override async filterUpdatedManga(mangaUpdatesFoundCallback: (updates: MangaUpdates) => void, time: Date, ids: string[]): Promise<void> {
-        let page = 0
-        console.log(time);
-        
-        let updatedManga: UpdatedManga = {
-            ids: [],
-            loadMore: true
-        }
-        let updateUrl = `${this.baseUrl}/v2/manga/getCategoryMangas?`
-        const parmas: any = this.helper.homePageParamBuilder()
-        parmas["sort"] = 1
-        parmas["start"] = page.toString()
-        updateUrl = this.helper.urlBuilder(updateUrl, parmas)
-        while (updatedManga.loadMore) {
+        let updatedManga: string[] = []
+        for (let index = 0; index < ids.length; index++) {
+            let getMangaUrl = `${this.baseUrl}/v1/manga/getDetail?`
+            const params: any = this.helper.paramBuilder()
+            params["mangaId"] = ids[index]
+            getMangaUrl = this.helper.urlBuilder(getMangaUrl, params)
             const request = createRequestObject({
-                url: updateUrl,
+                url: getMangaUrl,
                 method: 'GET',
             })
-
             const response = await this.requestManager.schedule(request, 1)
-
-            updatedManga = this.parser.parseUpdatedManga(response.data, ids)
-
-            if (updatedManga.ids.length > 0) {
-                mangaUpdatesFoundCallback(createMangaUpdates({
-                    ids: updatedManga.ids
-                }))
-            }
+            this.parser.parseUpdatedManga(response.data, time, ids[index]!, updatedManga)
         }
-
+        if (updatedManga.length > 0) {
+            mangaUpdatesFoundCallback(createMangaUpdates({
+                ids: updatedManga
+            }))
+        }
     }
 }
