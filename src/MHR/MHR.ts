@@ -22,7 +22,7 @@ import { Parser } from './MHRParser'
 export const MHR_DOMAIN = 'https://hk.dm5.com'
 
 export const MHRInfo: SourceInfo = {
-    version: '1.4.0',
+    version: '1.4.1',
     name: '漫畫人',
     description: '漫畫人',
     author: 'kpwa',
