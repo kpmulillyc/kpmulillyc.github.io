@@ -39,7 +39,6 @@ export const MHRInfo: SourceInfo = {
 }
 
 export class MHR extends Source {
-
     requestManager = createRequestManager({
         requestsPerSecond: 4,
         requestTimeout: 15000,
