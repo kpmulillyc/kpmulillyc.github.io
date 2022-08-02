@@ -1117,7 +1117,7 @@ const MHRHelper_1 = require("./MHRHelper");
 const MHRParser_1 = require("./MHRParser");
 exports.MHR_DOMAIN = 'https://hk.dm5.com';
 exports.MHRInfo = {
-    version: '1.4.1',
+    version: '1.4.2',
     name: '漫畫人',
     description: '漫畫人',
     author: 'kpwa',
@@ -1635,7 +1635,7 @@ class Parser {
         const hostList = parsedData.hostList[0];
         const query = parsedData.query;
         parsedData.mangaSectionImages.forEach((obj) => {
-            pages.push(`${hostList}${obj}${query}`);
+            pages.push(`${hostList}${encodeURI(obj)}${query}`);
         });
         return createChapterDetails({
             id: chapterId,
