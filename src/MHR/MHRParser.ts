@@ -19,7 +19,7 @@ export class Parser {
         const status = this.mangaStatus(parsedData.mangaIsOver)
         const author = converter(parsedData.mangaAuthor)
         const titles = converter(parsedData.mangaName)
-        const image = parsedData.mangaCoverimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
+        const image = parsedData.mangaPicimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
         const rating = parsedData.mangaGrade
 
         const tagArray: Tag[] = []
@@ -33,7 +33,7 @@ export class Parser {
 
         const views = parsedData.mangaHot
         const lastUpdate = parsedData.mangaNewestTime
-        const covers = parsedData.mangaPicimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
+        const covers = parsedData.mangaCoverimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
         const langFlag = LanguageCode.CHINEESE_HONGKONG
         return createManga({
             id: mangaId,
