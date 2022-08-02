@@ -1117,7 +1117,7 @@ const MHRHelper_1 = require("./MHRHelper");
 const MHRParser_1 = require("./MHRParser");
 exports.MHR_DOMAIN = 'https://hk.dm5.com';
 exports.MHRInfo = {
-    version: '1.4.2',
+    version: '1.4.3',
     name: '漫畫人',
     description: '漫畫人',
     author: 'kpwa',
@@ -1531,7 +1531,7 @@ class Parser {
         const status = this.mangaStatus(parsedData.mangaIsOver);
         const author = converter(parsedData.mangaAuthor);
         const titles = converter(parsedData.mangaName);
-        const image = parsedData.mangaCoverimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg";
+        const image = parsedData.mangaPicimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg";
         const rating = parsedData.mangaGrade;
         const tagArray = [];
         let tagId = 1;
@@ -1543,7 +1543,7 @@ class Parser {
         const tags = [createTagSection({ id: "0", label: "genres", tags: tagArray.map(x => createTag(x)) })];
         const views = parsedData.mangaHot;
         const lastUpdate = parsedData.mangaNewestTime;
-        const covers = parsedData.mangaPicimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg";
+        const covers = parsedData.mangaCoverimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg";
         const langFlag = paperback_extensions_common_1.LanguageCode.CHINEESE_HONGKONG;
         return createManga({
             id: mangaId,
