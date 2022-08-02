@@ -46,19 +46,19 @@ describe('ManHuaRen Tests', () => {
     //     expect(entry?.chapNum, 'No chapter number present').to.not.be.null
     // })
 
-    // it('Get Chapter Details', async () => {
-    //     const chapters = await wrapper.getChapters(source, mangaId)
-    //     //      const chapter = chapters[0]
-    //     //        console.log(chapter)
+    it('Get Chapter Details', async () => {
+        // const chapters = await wrapper.getChapters(source, mangaId)
+        //      const chapter = chapters[0]
+        //        console.log(chapter)
 
-    //     const data = await wrapper.getChapterDetails(source, mangaId, chapters[0]?.id ?? 'unknown')
-    //     expect(data, 'No server response').to.exist
-    //     expect(data, 'Empty server response').to.not.be.empty
+        const data = await wrapper.getChapterDetails(source, 'mangaId', '49218')
+        expect(data, 'No server response').to.exist
+        expect(data, 'Empty server response').to.not.be.empty
 
-    //     expect(data.id, 'Missing ID').to.be.not.empty
-    //     expect(data.mangaId, 'Missing MangaID').to.be.not.empty
-    //     expect(data.pages, 'No pages present').to.be.not.empty
-    // })
+        expect(data.id, 'Missing ID').to.be.not.empty
+        expect(data.mangaId, 'Missing MangaID').to.be.not.empty
+        expect(data.pages, 'No pages present').to.be.not.empty
+    })
 
     // it('Testing search', async () => {
     //     const testSearch: SearchRequest = {
@@ -80,18 +80,18 @@ describe('ManHuaRen Tests', () => {
     //     expect(result?.subtitleText, 'No subtitle text').to.be.not.null
     // })
 
-    it('Testing Home-Page aquisition', async () => {
-        const homePages = await wrapper.getHomePageSections(source)
-        expect(homePages, 'No response from server').to.exist
-        expect(homePages[0]?.items, 'No items present').to.exist
-    })
+    // it('Testing Home-Page aquisition', async () => {
+    //     const homePages = await wrapper.getHomePageSections(source)
+    //     expect(homePages, 'No response from server').to.exist
+    //     expect(homePages[0]?.items, 'No items present').to.exist
+    // })
 
-    it('Testing Notifications', async () => {
-        const updates = await wrapper.filterUpdatedManga(source, new Date('2021-10-17'), ['432'])
-        expect(updates, 'No server response').to.exist
-        expect(updates, 'Empty server response').to.not.be.empty
-        expect(updates[0], 'No updates').to.not.be.empty
-    })
+    // it('Testing Notifications', async () => {
+    //     const updates = await wrapper.filterUpdatedManga(source, new Date('2021-10-17'), ['432'])
+    //     expect(updates, 'No server response').to.exist
+    //     expect(updates, 'Empty server response').to.not.be.empty
+    //     expect(updates[0], 'No updates').to.not.be.empty
+    // })
 
     // it('Get tags', async () => {
     //     const tags = await wrapper.getTags(source)
