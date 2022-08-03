@@ -1117,7 +1117,7 @@ const MHRHelper_1 = require("./MHRHelper");
 const MHRParser_1 = require("./MHRParser");
 exports.MHR_DOMAIN = 'https://hk.dm5.com';
 exports.MHRInfo = {
-    version: '1.4.4',
+    version: '1.4.5',
     name: '漫畫人',
     description: '漫畫人',
     author: 'kpwa',
