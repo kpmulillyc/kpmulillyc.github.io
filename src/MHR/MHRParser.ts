@@ -136,7 +136,7 @@ export class Parser {
         const hostList = parsedData.hostList[0]
         const query = parsedData.query
         parsedData.mangaSectionImages.forEach((obj: any) => {
-            pages.push(`${hostList}${encodeURI(obj)}${query}`)
+            pages.push(`${encodeURI(hostList+obj)}${query}`)
         });
         return createChapterDetails({
             id: chapterId,
