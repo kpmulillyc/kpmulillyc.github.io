@@ -1117,7 +1117,7 @@ const MHRHelper_1 = require("./MHRHelper");
 const MHRParser_1 = require("./MHRParser");
 exports.MHR_DOMAIN = 'https://hk.dm5.com';
 exports.MHRInfo = {
-    version: '1.4.5',
+    version: '2.0',
     name: '漫畫人',
     description: '漫畫人',
     author: 'kpwa',
@@ -1141,10 +1141,12 @@ class MHR extends paperback_extensions_common_1.Source {
             interceptor: {
                 interceptRequest: (request) => __awaiter(this, void 0, void 0, function* () {
                     request.headers = {
-                        'user-agent': "okhttp/3.11.0",
+                        'user-agent': "okhttp/3.12.13",
                         'referer': "http://www.dm5.com/dm5api/",
-                        'clubReferer': "http://mangaapi.manhuaren.com/",
-                        'X-Yq-Yqci': "{\"le\": \"zh\"}"
+                        'clubReferer': "http://hk.mangaapi.manhuaren.com/",
+                        'X-Yq-Key': '438166431',
+                        'X-Yq-Yqpp': `{"flg":"","ac":"","cut":"GMT+8","laut":"0","fcc":"","flcc":"","ciso":"us","lcc":"","lot":"","lcn":"","flat":"","flot":"","lat":""}`,
+                        'X-Yq-Yqci': `{"at":-1,"av":"5.7.1.2","cl":"dm5","cy":"US","di":"-26,-64,-25,-72,38,-17,-6,109,88,60,-96,-74,77,12,66,-19,-38,70,106,121,-15,-13,16,-115,102,35,74,-75,103,97,70,51","dm":"Android SDK built for x86","fcl":"dm5","ft":"bsr","fut":"1659456508000","le":"en","ln":"","lut":"1659456508000","nt":1,"os":1,"ov":"30_11","pt":"com.ilike.cartoon","rn":"1440x2392","st":1}`
                     };
                     return request;
                 }),
@@ -1153,7 +1155,7 @@ class MHR extends paperback_extensions_common_1.Source {
                 })
             }
         });
-        this.baseUrl = "http://mangaapi.manhuaren.com";
+        this.baseUrl = "http://hk.mangaapi.manhuaren.com";
         this.parser = new MHRParser_1.Parser();
         this.helper = new MHRHelper_1.MHRHelper();
     }
@@ -1176,7 +1178,7 @@ class MHR extends paperback_extensions_common_1.Source {
     }
     getChapters(mangaId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let getChapterUrl = `${this.baseUrl}/v1/manga/getDetail?`;
+            let getChapterUrl = `${this.baseUrl}/v1/manga/getSections?`;
             const params = this.helper.paramBuilder();
             params["mangaId"] = mangaId;
             getChapterUrl = this.helper.urlBuilder(getChapterUrl, params);
@@ -1194,7 +1196,7 @@ class MHR extends paperback_extensions_common_1.Source {
             let detailsUrl = `${this.baseUrl}/v1/manga/getRead?`;
             const params = this.helper.paramBuilder();
             params["mangaSectionId"] = chapterId;
-            params["netType"] = "4";
+            params["netType"] = "1";
             params["loadreal"] = "1";
             params["imageQuality"] = "2";
             detailsUrl = this.helper.urlBuilder(detailsUrl, params);
@@ -1243,6 +1245,7 @@ class MHR extends paperback_extensions_common_1.Source {
                 params["subCategoryType"] = queryTag.slice(0, 1);
                 params["subCategoryId"] = queryTag.slice(1);
                 params["start"] = page.toString();
+                params["limit"] = "20";
                 searchUrl = this.helper.urlBuilder(searchUrl, params);
                 let request = createRequestObject({
                     url: searchUrl,
@@ -1260,21 +1263,18 @@ class MHR extends paperback_extensions_common_1.Source {
     }
     getHomePageSections(sectionCallback) {
         return __awaiter(this, void 0, void 0, function* () {
-            let homePageUrl = `${this.baseUrl}/v2/manga/getCategoryMangas?`;
+            let homePageUrl = `${this.baseUrl}/v2/manga/getSectionMangaList?`;
             const popularParams = this.helper.homePageParamBuilder();
-            const lastUpdateParams = this.helper.homePageParamBuilder();
-            const hotNewParams = this.helper.homePageParamBuilder();
+            const featureParams = this.helper.homePageParamBuilder();
+            const hotParams = this.helper.homePageParamBuilder();
             const hotEndParams = this.helper.homePageParamBuilder();
-            lastUpdateParams["sort"] = "1";
-            hotNewParams["sort"] = "2";
-            hotEndParams["sort"] = "3";
-            popularParams["limit"] = "20";
-            lastUpdateParams["limit"] = "5";
-            hotNewParams["limit"] = "5";
-            hotEndParams["limit"] = "5";
+            popularParams["sectionId"] = "701";
+            featureParams["sectionId"] = "491";
+            hotParams["sectionId"] = "501";
+            hotEndParams["sectionId"] = "1051";
             const popularUrl = this.helper.urlBuilder(homePageUrl, popularParams);
-            const lastUpdateUrl = this.helper.urlBuilder(homePageUrl, lastUpdateParams);
-            const hotNewUrl = this.helper.urlBuilder(homePageUrl, hotNewParams);
+            const lastUpdateUrl = this.helper.urlBuilder(homePageUrl, featureParams);
+            const hotNewUrl = this.helper.urlBuilder(homePageUrl, hotParams);
             const hotEndUrl = this.helper.urlBuilder(homePageUrl, hotEndParams);
             const sections = [
                 {
@@ -1284,7 +1284,7 @@ class MHR extends paperback_extensions_common_1.Source {
                     }),
                     section: createHomeSection({
                         id: 'popular',
-                        title: '熱門',
+                        title: '日韓',
                         view_more: true,
                         type: paperback_extensions_common_1.HomeSectionType.singleRowNormal
                     }),
@@ -1296,7 +1296,7 @@ class MHR extends paperback_extensions_common_1.Source {
                     }),
                     section: createHomeSection({
                         id: 'updates',
-                        title: '最近更新',
+                        title: '精品',
                         view_more: true,
                         type: paperback_extensions_common_1.HomeSectionType.singleRowNormal
                     }),
@@ -1308,7 +1308,7 @@ class MHR extends paperback_extensions_common_1.Source {
                     }),
                     section: createHomeSection({
                         id: 'hotNew',
-                        title: '熱門新作',
+                        title: '熱門',
                         view_more: true,
                         type: paperback_extensions_common_1.HomeSectionType.singleRowNormal
                     }),
@@ -1320,7 +1320,7 @@ class MHR extends paperback_extensions_common_1.Source {
                     }),
                     section: createHomeSection({
                         id: 'hotEnd',
-                        title: '熱門完結',
+                        title: '完結',
                         view_more: true,
                         type: paperback_extensions_common_1.HomeSectionType.singleRowNormal
                     }),
@@ -1343,21 +1343,22 @@ class MHR extends paperback_extensions_common_1.Source {
             if (metadata === null || metadata === void 0 ? void 0 : metadata.completed)
                 return metadata;
             const page = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 0;
-            let homePageUrl = `${this.baseUrl}/v2/manga/getCategoryMangas?`;
+            let homePageUrl = `${this.baseUrl}/v2/manga/getSectionMangaList?`;
             const params = this.helper.homePageParamBuilder();
             params["start"] = page.toString();
+            params["limit"] = "20";
             switch (homepageSectionId) {
                 case "popular":
-                    params["sort"] = 0;
+                    params["sectionId"] = "701";
                     break;
                 case "updates":
-                    params["sort"] = 1;
+                    params["sectionId"] = "491";
                     break;
                 case "hotNew":
-                    params["sort"] = 2;
+                    params["sectionId"] = "501";
                     break;
                 case "hotEnd":
-                    params["sort"] = 3;
+                    params["sectionId"] = "1051";
                     break;
                 default:
                     throw new Error('Requested to getViewMoreItems for a section ID which doesn\'t exist');
@@ -1378,23 +1379,29 @@ class MHR extends paperback_extensions_common_1.Source {
     }
     filterUpdatedManga(mangaUpdatesFoundCallback, time, ids) {
         return __awaiter(this, void 0, void 0, function* () {
-            let updatedManga = [];
-            for (let index = 0; index < ids.length; index++) {
-                let getMangaUrl = `${this.baseUrl}/v1/manga/getDetail?`;
-                const params = this.helper.paramBuilder();
-                params["mangaId"] = ids[index];
-                getMangaUrl = this.helper.urlBuilder(getMangaUrl, params);
+            let page = 0;
+            let updatedManga = {
+                ids: [],
+                loadMore: true
+            };
+            while (updatedManga.loadMore) {
+                let updateUrl = `${this.baseUrl}/v1/manga/getUpdate?`;
+                const params = this.helper.homePageParamBuilder();
+                params["limit"] = "100";
+                params["start"] = page.toString();
+                updateUrl = this.helper.urlBuilder(updateUrl, params);
                 const request = createRequestObject({
-                    url: getMangaUrl,
+                    url: updateUrl,
                     method: 'GET',
                 });
                 const response = yield this.requestManager.schedule(request, 1);
-                this.parser.parseUpdatedManga(response.data, time, ids[index], updatedManga);
-            }
-            if (updatedManga.length > 0) {
-                mangaUpdatesFoundCallback(createMangaUpdates({
-                    ids: updatedManga
-                }));
+                updatedManga = this.parser.parseUpdatedManga(response.data, time, ids);
+                if (updatedManga.ids.length > 0) {
+                    mangaUpdatesFoundCallback(createMangaUpdates({
+                        ids: updatedManga.ids
+                    }));
+                }
+                page += 100;
             }
         });
     }
@@ -1413,10 +1420,7 @@ class MHRHelper {
         params["gsn"] = hashStr;
         for (const key in params) {
             url += key + "=";
-            if (key === "gts")
-                url += this.timeEncode(params[key]);
-            else
-                url += encodeURI(params[key]);
+            url += this.requestEncode(params[key]);
             url += "&";
         }
         return url.slice(0, -1);
@@ -1426,24 +1430,46 @@ class MHRHelper {
         const today = new Date(timeElapsed);
         const now = today.toISOString().replace("T", "+").slice(0, -5);
         const params = {
-            "gsm": "md5",
-            "gft": "json",
-            "gts": now,
+            "gac": "",
             "gak": "android_manhuaren2",
             "gat": "",
-            "gau": "191909801",
-            "gui": "191909801",
-            "gut": "0",
+            "gaui": "438166431",
+            "gav": "5.7.1.2",
+            "gciso": "us",
+            "gcl": "dm5",
+            "gcut": "GMT+8",
+            "gcy": "US",
+            "gdi": "-26,-64,-25,-72,38,-17,-6,109,88,60,-96,-74,77,12,66,-19,-38,70,106,121,-15,-13,16,-115,102,35,74,-75,103,97,70,51",
+            "gfcc": "",
+            "gfcl": "dm5",
+            "gflat": "",
+            "gflcc": "",
+            "gflg": "",
+            "gflot": "",
+            "gft": "json",
+            "gfut": "1659456508000",
+            "glat": "",
+            "glbsaut": "0",
+            "glcc": "",
+            "glcn": "",
+            "gle": "en",
+            "gln": "",
+            "glot": "",
+            "glut": "1659456508000",
+            "gos": "1",
+            "gov": "30_11",
+            "gpt": "com.ilike.cartoon",
+            "gsm": "md5",
+            "gts": now,
+            "gui": "438166431",
+            "gut": "0"
         };
         return params;
     }
     homePageParamBuilder() {
         const params = this.paramBuilder();
-        params["subCategoryType"] = "0";
-        params["subCategoryId"] = "0";
         params["start"] = "0";
-        params["limit"] = "20";
-        params["sort"] = "0";
+        params["limit"] = "5";
         return params;
     }
     generateGSNHash(params) {
@@ -1452,18 +1478,15 @@ class MHRHelper {
         for (let key in sortedObj) {
             if (key != "gsn") {
                 s += key;
-                if (key == "gts")
-                    s += this.timeEncode(sortedObj[key].toString());
-                else
-                    s += encodeURI(sortedObj[key].toString());
+                s += this.requestEncode(sortedObj[key]);
             }
         }
         ;
         s += C;
         return md5_1.Md5.hashStr(s);
     }
-    timeEncode(timeStr) {
-        return timeStr.replace("+", "%2B").replace(":", "%3A").replace(":", "%3A");
+    requestEncode(timeStr) {
+        return encodeURIComponent(timeStr.replace("%7E", "~").replace("*", "%2A"));
     }
 }
 exports.MHRHelper = MHRHelper;
@@ -1477,11 +1500,26 @@ const OpenCC = require('opencc-js');
 const converter = OpenCC.Converter({ from: 'cn', to: 'hk' });
 class Parser {
     constructor() {
-        this.parseUpdatedManga = ($, time, id, updatedManga) => {
+        this.parseUpdatedManga = ($, time, ids) => {
             const parsedData = JSON.parse($).response;
-            const date = new Date(parsedData.mangaNewestTime);
-            if (date > time)
-                updatedManga.push(id);
+            const updatedManga = [];
+            let loadMore = true;
+            parsedData.mangas.forEach((obj) => {
+                const id = obj.mangaId.toString();
+                const mangaDate = new Date(obj.mangaNewestTime);
+                if (mangaDate > time) {
+                    if (ids.includes(id)) {
+                        updatedManga.push(id);
+                    }
+                }
+                else {
+                    loadMore = false;
+                }
+            });
+            return {
+                ids: updatedManga,
+                loadMore
+            };
         };
         this.parseTags = () => {
             const arrayTags = [];
@@ -1529,9 +1567,9 @@ class Parser {
         const parsedData = JSON.parse($).response;
         const desc = converter(parsedData.mangaIntro);
         const status = this.mangaStatus(parsedData.mangaIsOver);
-        const author = converter(parsedData.mangaAuthor);
+        const author = converter(parsedData.mangaAuthors.toString());
         const titles = converter(parsedData.mangaName);
-        const image = parsedData.mangaPicimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg";
+        const image = parsedData.mangaCoverimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg";
         const rating = parsedData.mangaGrade;
         const tagArray = [];
         let tagId = 1;
@@ -1543,7 +1581,7 @@ class Parser {
         const tags = [createTagSection({ id: "0", label: "genres", tags: tagArray.map(x => createTag(x)) })];
         const views = parsedData.mangaHot;
         const lastUpdate = parsedData.mangaNewestTime;
-        const covers = parsedData.mangaCoverimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg";
+        const covers = parsedData.mangaPicimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg";
         const langFlag = paperback_extensions_common_1.LanguageCode.CHINEESE_HONGKONG;
         return createManga({
             id: mangaId,
@@ -1650,7 +1688,7 @@ class Parser {
         parsedData.mangas.forEach((obj) => {
             const id = obj.mangaId.toString();
             const title = createIconText({ text: converter(obj.mangaName) });
-            const image = obj.mangaPicimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg";
+            const image = obj.mangaCoverimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg";
             const subtitle = converter(obj.mangaNewestContent);
             tiles.push(createMangaTile({
                 id: id,
@@ -1667,7 +1705,7 @@ class Parser {
         parsedData.mangas.forEach((obj) => {
             const id = obj.mangaId.toString();
             const title = createIconText({ text: converter(obj.mangaName) });
-            const image = obj.mangaPicimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg";
+            const image = obj.mangaCoverimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg";
             const subtitle = converter(obj.mangaNewestContent);
             tiles.push(createMangaTile({
                 id: id,
@@ -1681,7 +1719,7 @@ class Parser {
     getChapterName(type, name, title) {
         let final = "";
         final += type == "mangaEpisode" ? "[番外] " : "";
-        final += converter(name);
+        final += converter(name) + " ";
         final += title == "" ? "" : converter(title);
         return final;
     }
