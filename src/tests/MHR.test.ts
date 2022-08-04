@@ -20,7 +20,7 @@ describe('ManHuaRen Tests', () => {
    * Try to choose a manga which is updated frequently, so that the historical checking test can
    * return proper results, as it is limited to searching 30 days back due to extremely long processing times otherwise.
    */
-    const mangaId = '5536' // kengan-omega
+    // const mangaId = '432' // kengan-omega
 
     // it('Retrieve Manga Details', async () => {
     //     const details = await wrapper.getMangaDetails(source, mangaId)
@@ -46,19 +46,19 @@ describe('ManHuaRen Tests', () => {
     //     expect(entry?.chapNum, 'No chapter number present').to.not.be.null
     // })
 
-    it('Get Chapter Details', async () => {
-        // const chapters = await wrapper.getChapters(source, mangaId)
-        //      const chapter = chapters[0]
-        //        console.log(chapter)
+    // it('Get Chapter Details', async () => {
+    //     // const chapters = await wrapper.getChapters(source, mangaId)
+    //     //      const chapter = chapters[0]
+    //     //        console.log(chapter)
 
-        const data = await wrapper.getChapterDetails(source, mangaId, '60760')
-        expect(data, 'No server response').to.exist
-        expect(data, 'Empty server response').to.not.be.empty
+    //     const data = await wrapper.getChapterDetails(source, mangaId, '60760')
+    //     expect(data, 'No server response').to.exist
+    //     expect(data, 'Empty server response').to.not.be.empty
 
-        expect(data.id, 'Missing ID').to.be.not.empty
-        expect(data.mangaId, 'Missing MangaID').to.be.not.empty
-        expect(data.pages, 'No pages present').to.be.not.empty
-    })
+    //     expect(data.id, 'Missing ID').to.be.not.empty
+    //     expect(data.mangaId, 'Missing MangaID').to.be.not.empty
+    //     expect(data.pages, 'No pages present').to.be.not.empty
+    // })
 
     // it('Testing search', async () => {
     //     const testSearch: SearchRequest = {
@@ -86,12 +86,12 @@ describe('ManHuaRen Tests', () => {
     //     expect(homePages[0]?.items, 'No items present').to.exist
     // })
 
-    // it('Testing Notifications', async () => {
-    //     const updates = await wrapper.filterUpdatedManga(source, new Date('2021-10-17'), ['432'])
-    //     expect(updates, 'No server response').to.exist
-    //     expect(updates, 'Empty server response').to.not.be.empty
-    //     expect(updates[0], 'No updates').to.not.be.empty
-    // })
+    it('Testing Notifications', async () => {
+        const updates = await wrapper.filterUpdatedManga(source, new Date('2022-08-04'), ['43555'])
+        expect(updates, 'No server response').to.exist
+        expect(updates, 'Empty server response').to.not.be.empty
+        expect(updates[0], 'No updates').to.not.be.empty
+    })
 
     // it('Get tags', async () => {
     //     const tags = await wrapper.getTags(source)

@@ -17,9 +17,10 @@ export class Parser {
         const parsedData = JSON.parse($).response
         const desc = converter(parsedData.mangaIntro)
         const status = this.mangaStatus(parsedData.mangaIsOver)
-        const author = converter(parsedData.mangaAuthor)
+        const author = converter(parsedData.mangaAuthors.toString())
+
         const titles = converter(parsedData.mangaName)
-        const image = parsedData.mangaPicimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
+        const image = parsedData.mangaCoverimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg"
         const rating = parsedData.mangaGrade
 
         const tagArray: Tag[] = []
@@ -33,7 +34,7 @@ export class Parser {
 
         const views = parsedData.mangaHot
         const lastUpdate = parsedData.mangaNewestTime
-        const covers = parsedData.mangaCoverimageUrl || "http://mhfm5.tel.cdndm5.com/tag/category/nopic.jpg"
+        const covers = parsedData.mangaPicimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg"
         const langFlag = LanguageCode.CHINEESE_HONGKONG
         return createManga({
             id: mangaId,
@@ -52,11 +53,28 @@ export class Parser {
     }
 
 
-    parseUpdatedManga = ($: any, time: Date, id: string, updatedManga: string[]): void => {
+    parseUpdatedManga = ($: any, time: Date, ids: string[]): UpdatedManga => {
         const parsedData = JSON.parse($).response
-        const date = new Date(parsedData.mangaNewestTime)
-        if (date > time)
-            updatedManga.push(id)
+        const updatedManga: string[] = []
+        let loadMore = true
+
+        parsedData.mangas.forEach((obj: any) => {
+            const id = obj.mangaId.toString()
+            const mangaDate = new Date(obj.mangaNewestTime)
+            if (mangaDate > time) {
+                if (ids.includes(id)) {
+                    updatedManga.push(id)
+                }
+            } else {
+                loadMore = false
+            }
+        
+        })
+
+        return {
+            ids: updatedManga,
+            loadMore
+        }
     }
 
 
@@ -114,6 +132,9 @@ export class Parser {
         return chapters
     }
 
+
+
+
     parseSearchResult($: any): MangaTile[] {
         const result: MangaTile[] = []
         const parsedData = JSON.parse($)
@@ -136,7 +157,7 @@ export class Parser {
         const hostList = parsedData.hostList[0]
         const query = parsedData.query
         parsedData.mangaSectionImages.forEach((obj: any) => {
-            pages.push(`${encodeURI(hostList+obj)}${query}`)
+            pages.push(`${encodeURI(hostList + obj)}${query}`)
         });
         return createChapterDetails({
             id: chapterId,
@@ -195,7 +216,7 @@ export class Parser {
         parsedData.mangas.forEach((obj: any) => {
             const id: string = obj.mangaId.toString()
             const title = createIconText({ text: converter(obj.mangaName) })
-            const image = obj.mangaPicimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg"
+            const image = obj.mangaCoverimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg"
             const subtitle = converter(obj.mangaNewestContent)
             tiles.push(createMangaTile({
                 id: id,
@@ -214,7 +235,7 @@ export class Parser {
         parsedData.mangas.forEach((obj: any) => {
             const id: string = obj.mangaId.toString()
             const title = createIconText({ text: converter(obj.mangaName) })
-            const image = obj.mangaPicimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg"
+            const image = obj.mangaCoverimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg"
             const subtitle = converter(obj.mangaNewestContent)
             tiles.push(createMangaTile({
                 id: id,
@@ -229,7 +250,7 @@ export class Parser {
     getChapterName(type: string, name: string, title: string): string {
         let final = ""
         final += type == "mangaEpisode" ? "[番外] " : ""
-        final += converter(name)
+        final += converter(name) + " "
         final += title == "" ? "" : converter(title)
         return final
     }

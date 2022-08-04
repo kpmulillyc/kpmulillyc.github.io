@@ -17,12 +17,12 @@ import {
     TagSection,
 } from "paperback-extensions-common"
 import { MHRHelper } from "./MHRHelper"
-import { Parser } from './MHRParser'
+import { Parser, UpdatedManga } from './MHRParser'
 
 export const MHR_DOMAIN = 'https://hk.dm5.com'
 
 export const MHRInfo: SourceInfo = {
-    version: '1.4.5',
+    version: '2.0',
     name: '漫畫人',
     description: '漫畫人',
     author: 'kpwa',
@@ -46,10 +46,12 @@ export class MHR extends Source {
             interceptRequest: async (request: Request): Promise<Request> => {
 
                 request.headers = {
-                    'user-agent': "okhttp/3.11.0",
+                    'user-agent': "okhttp/3.12.13",
                     'referer': "http://www.dm5.com/dm5api/",
-                    'clubReferer': "http://mangaapi.manhuaren.com/",
-                    'X-Yq-Yqci': "{\"le\": \"zh\"}"
+                    'clubReferer': "http://hk.mangaapi.manhuaren.com/",
+                    'X-Yq-Key': '438166431',
+                    'X-Yq-Yqpp': `{"flg":"","ac":"","cut":"GMT+8","laut":"0","fcc":"","flcc":"","ciso":"us","lcc":"","lot":"","lcn":"","flat":"","flot":"","lat":""}`,
+                    'X-Yq-Yqci': `{"at":-1,"av":"5.7.1.2","cl":"dm5","cy":"US","di":"-26,-64,-25,-72,38,-17,-6,109,88,60,-96,-74,77,12,66,-19,-38,70,106,121,-15,-13,16,-115,102,35,74,-75,103,97,70,51","dm":"Android SDK built for x86","fcl":"dm5","ft":"bsr","fut":"1659456508000","le":"en","ln":"","lut":"1659456508000","nt":1,"os":1,"ov":"30_11","pt":"com.ilike.cartoon","rn":"1440x2392","st":1}`
                 }
 
                 return request
@@ -60,7 +62,7 @@ export class MHR extends Source {
             }
         }
     })
-    baseUrl: string = "http://mangaapi.manhuaren.com"
+    baseUrl: string = "http://hk.mangaapi.manhuaren.com"
     parser = new Parser()
     helper = new MHRHelper()
 
@@ -83,7 +85,7 @@ export class MHR extends Source {
 
     async getChapters(mangaId: string): Promise<Chapter[]> {
 
-        let getChapterUrl = `${this.baseUrl}/v1/manga/getDetail?`
+        let getChapterUrl = `${this.baseUrl}/v1/manga/getSections?`
         const params: any = this.helper.paramBuilder()
         params["mangaId"] = mangaId
         getChapterUrl = this.helper.urlBuilder(getChapterUrl, params)
@@ -101,7 +103,7 @@ export class MHR extends Source {
         let detailsUrl = `${this.baseUrl}/v1/manga/getRead?`
         const params: any = this.helper.paramBuilder()
         params["mangaSectionId"] = chapterId
-        params["netType"] = "4"
+        params["netType"] = "1"
         params["loadreal"] = "1"
         params["imageQuality"] = "2"
         detailsUrl = this.helper.urlBuilder(detailsUrl, params)
@@ -150,6 +152,7 @@ export class MHR extends Source {
             params["subCategoryType"] = queryTag.slice(0, 1)
             params["subCategoryId"] = queryTag.slice(1)
             params["start"] = page.toString()
+            params["limit"] = "20"
             searchUrl = this.helper.urlBuilder(searchUrl, params)
             let request = createRequestObject({
                 url: searchUrl,
@@ -170,22 +173,21 @@ export class MHR extends Source {
 
     override async getHomePageSections(sectionCallback: (section: HomeSection) => void): Promise<void> {
 
-        let homePageUrl = `${this.baseUrl}/v2/manga/getCategoryMangas?`
+        let homePageUrl = `${this.baseUrl}/v2/manga/getSectionMangaList?`
 
         const popularParams: any = this.helper.homePageParamBuilder()
-        const lastUpdateParams: any = this.helper.homePageParamBuilder()
-        const hotNewParams: any = this.helper.homePageParamBuilder()
+        const featureParams: any = this.helper.homePageParamBuilder()
+        const hotParams: any = this.helper.homePageParamBuilder()
         const hotEndParams: any = this.helper.homePageParamBuilder()
-        lastUpdateParams["sort"] = "1"
-        hotNewParams["sort"] = "2"
-        hotEndParams["sort"] = "3"
-        popularParams["limit"] = "20"
-        lastUpdateParams["limit"] = "5"
-        hotNewParams["limit"] = "5"
-        hotEndParams["limit"] = "5"
+
+        popularParams["sectionId"] = "701"
+        featureParams["sectionId"] = "491"
+        hotParams["sectionId"] = "501"
+        hotEndParams["sectionId"] = "1051"
+
         const popularUrl = this.helper.urlBuilder(homePageUrl, popularParams)
-        const lastUpdateUrl = this.helper.urlBuilder(homePageUrl, lastUpdateParams)
-        const hotNewUrl = this.helper.urlBuilder(homePageUrl, hotNewParams)
+        const lastUpdateUrl = this.helper.urlBuilder(homePageUrl, featureParams)
+        const hotNewUrl = this.helper.urlBuilder(homePageUrl, hotParams)
         const hotEndUrl = this.helper.urlBuilder(homePageUrl, hotEndParams)
 
         const sections = [
@@ -196,7 +198,7 @@ export class MHR extends Source {
                 }),
                 section: createHomeSection({
                     id: 'popular',
-                    title: '熱門',
+                    title: '日韓',
                     view_more: true,
                     type: HomeSectionType.singleRowNormal
                 }),
@@ -208,7 +210,7 @@ export class MHR extends Source {
                 }),
                 section: createHomeSection({
                     id: 'updates',
-                    title: '最近更新',
+                    title: '精品',
                     view_more: true,
                     type: HomeSectionType.singleRowNormal
                 }),
@@ -220,7 +222,7 @@ export class MHR extends Source {
                 }),
                 section: createHomeSection({
                     id: 'hotNew',
-                    title: '熱門新作',
+                    title: '熱門',
                     view_more: true,
                     type: HomeSectionType.singleRowNormal
                 }),
@@ -232,7 +234,7 @@ export class MHR extends Source {
                 }),
                 section: createHomeSection({
                     id: 'hotEnd',
-                    title: '熱門完結',
+                    title: '完結',
                     view_more: true,
                     type: HomeSectionType.singleRowNormal
                 }),
@@ -257,21 +259,22 @@ export class MHR extends Source {
         if (metadata?.completed) return metadata
 
         const page: number = metadata?.page ?? 0
-        let homePageUrl = `${this.baseUrl}/v2/manga/getCategoryMangas?`
+        let homePageUrl = `${this.baseUrl}/v2/manga/getSectionMangaList?`
         const params: any = this.helper.homePageParamBuilder()
         params["start"] = page.toString()
+        params["limit"] = "20"
         switch (homepageSectionId) {
             case "popular":
-                params["sort"] = 0
+                params["sectionId"] = "701"
                 break
             case "updates":
-                params["sort"] = 1
+                params["sectionId"] = "491"
                 break
             case "hotNew":
-                params["sort"] = 2
+                params["sectionId"] = "501"
                 break
             case "hotEnd":
-                params["sort"] = 3
+                params["sectionId"] = "1051"
                 break
             default:
                 throw new Error('Requested to getViewMoreItems for a section ID which doesn\'t exist')
@@ -281,7 +284,6 @@ export class MHR extends Source {
             url: homePageUrl,
             method: 'GET'
         })
-
         const response = await this.requestManager.schedule(request, 1)
         const manga = this.parser.parseViewMore(response.data)
         metadata = !this.parser.isLastPage(response.data, true) ? { page: page + 20 } : undefined
@@ -293,23 +295,35 @@ export class MHR extends Source {
 
 
     override async filterUpdatedManga(mangaUpdatesFoundCallback: (updates: MangaUpdates) => void, time: Date, ids: string[]): Promise<void> {
-        let updatedManga: string[] = []
-        for (let index = 0; index < ids.length; index++) {
-            let getMangaUrl = `${this.baseUrl}/v1/manga/getDetail?`
-            const params: any = this.helper.paramBuilder()
-            params["mangaId"] = ids[index]
-            getMangaUrl = this.helper.urlBuilder(getMangaUrl, params)
+        let page = 0
+
+
+        let updatedManga: UpdatedManga = {
+            ids: [],
+            loadMore: true
+        }
+
+        while (updatedManga.loadMore) {
+            let updateUrl = `${this.baseUrl}/v1/manga/getUpdate?`
+            const params: any = this.helper.homePageParamBuilder()
+            params["limit"] = "100"
+            params["start"] = page.toString()
+            updateUrl = this.helper.urlBuilder(updateUrl, params)
             const request = createRequestObject({
-                url: getMangaUrl,
+                url: updateUrl,
                 method: 'GET',
             })
+
             const response = await this.requestManager.schedule(request, 1)
-            this.parser.parseUpdatedManga(response.data, time, ids[index]!, updatedManga)
+
+            updatedManga = this.parser.parseUpdatedManga(response.data, time, ids)
+            if (updatedManga.ids.length > 0) {
+                mangaUpdatesFoundCallback(createMangaUpdates({
+                    ids: updatedManga.ids
+                }))
+            }
+            page += 100
         }
-        if (updatedManga.length > 0) {
-            mangaUpdatesFoundCallback(createMangaUpdates({
-                ids: updatedManga
-            }))
-        }
+        
     }
 }

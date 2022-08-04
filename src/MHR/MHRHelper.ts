@@ -9,10 +9,7 @@ export class MHRHelper {
         params["gsn"] = hashStr
         for (const key in params) {
             url += key + "="
-            if (key === "gts")
-                url += this.timeEncode(params[key])
-            else
-                url += encodeURI(params[key])
+            url += this.requestEncode(params[key])
             url += "&"
         }
         return url.slice(0, -1)
@@ -23,25 +20,47 @@ export class MHRHelper {
         const today = new Date(timeElapsed);
         const now = today.toISOString().replace("T", "+").slice(0, -5)
         const params: any = {
-            "gsm": "md5",
-            "gft": "json",
-            "gts": now,
+            "gac": "",
             "gak": "android_manhuaren2",
             "gat": "",
-            "gau": "191909801",
-            "gui": "191909801",
-            "gut": "0",
+            "gaui": "438166431",
+            "gav": "5.7.1.2",
+            "gciso": "us",
+            "gcl": "dm5",
+            "gcut": "GMT+8",
+            "gcy": "US",
+            "gdi": "-26,-64,-25,-72,38,-17,-6,109,88,60,-96,-74,77,12,66,-19,-38,70,106,121,-15,-13,16,-115,102,35,74,-75,103,97,70,51",
+            "gfcc": "",
+            "gfcl": "dm5",
+            "gflat": "",
+            "gflcc": "",
+            "gflg": "",
+            "gflot": "",
+            "gft": "json",
+            "gfut": "1659456508000",
+            "glat": "",
+            "glbsaut": "0",
+            "glcc": "",
+            "glcn": "",
+            "gle": "en",
+            "gln": "",
+            "glot": "",
+            "glut": "1659456508000",
+            "gos": "1",
+            "gov": "30_11",
+            "gpt": "com.ilike.cartoon",
+            "gsm": "md5",
+            "gts": now,
+            "gui": "438166431",
+            "gut": "0"
         }
         return params
     }
 
     homePageParamBuilder(): {} {
-        const params:any = this.paramBuilder()
-        params["subCategoryType"] = "0"
-        params["subCategoryId"] = "0"
+        const params: any = this.paramBuilder()
         params["start"] = "0"
-        params["limit"] = "20"
-        params["sort"] = "0"
+        params["limit"] = "5"
         return params
     }
 
@@ -51,17 +70,14 @@ export class MHRHelper {
         for (let key in sortedObj) {
             if (key != "gsn") {
                 s += key
-                if (key == "gts")
-                    s += this.timeEncode(sortedObj[key]!.toString())
-                else
-                    s += encodeURI(sortedObj[key]!.toString())
+                s += this.requestEncode(sortedObj[key])
             }
         };
         s += C
         return Md5.hashStr(s)
     }
 
-    timeEncode(timeStr: string): string {
-        return timeStr.replace("+", "%2B").replace(":", "%3A").replace(":", "%3A")
+    requestEncode(timeStr: string): string {
+        return encodeURIComponent(timeStr.replace("%7E", "~").replace("*", "%2A"))
     }
 }
