@@ -7319,26 +7319,31 @@ class JM extends paperback_extensions_common_1.Source {
         });
     }
     getSearchResults(query, metadata) {
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
-            if (metadata === null || metadata === void 0 ? void 0 : metadata.completed)
-                return metadata;
             const url = `${this.baseUrl}search`;
-            metadata = metadata !== null && metadata !== void 0 ? metadata : { page: 1, start: 0, total: 0 };
+            const page = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 1;
+            const start = (_b = metadata === null || metadata === void 0 ? void 0 : metadata.start) !== null && _b !== void 0 ? _b : 0;
+            const total = (_c = metadata === null || metadata === void 0 ? void 0 : metadata.total) !== null && _c !== void 0 ? _c : 0;
             const request = createRequestObject({
                 url: url,
-                param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&search_query=${encodeURIComponent(query.title)}&page=${metadata.page}`,
                 headers: Object.assign(Object.assign({}, headers), (0, JMHelper_1.getToken)()),
                 method: 'GET'
             });
+            if (query.title)
+                request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&search_query=${encodeURIComponent(query.title)}&page=${page}`;
             const json = yield this.requestManager.schedule(request, 1);
             const data = JSON.parse(json.data).data;
             const decodedData = (0, JMHelper_1.decode)(data);
-            const total = JSON.parse(decodedData).total;
-            const results = this.parser.parseSearchResult(decodedData, metadata.start);
-            metadata = (metadata === null || metadata === void 0 ? void 0 : metadata.start) >= 80 ? { page: metadata.page + 1, start: 0, total: metadata.total + 10 } : { page: metadata.page, start: metadata.start + 10, total: metadata.total + 10 };
-            metadata = (metadata === null || metadata === void 0 ? void 0 : metadata.total) >= total ? undefined : metadata;
-            return createPagedResults({ results,
-                metadata });
+            const resultTotal = JSON.parse(decodedData).total - 1;
+            const results = this.parser.parseSearchResult(decodedData, start, resultTotal);
+            metadata = (metadata === null || metadata === void 0 ? void 0 : metadata.start) >= 80 ? { page: page + 1, start: 0, total: total + 10 } : { page: page, start: start + 10, total: total + 10 };
+            if (total >= resultTotal)
+                metadata = undefined;
+            return createPagedResults({
+                results,
+                metadata
+            });
         });
     }
     getHomePageSections(sectionCallback) {
@@ -7414,10 +7419,11 @@ class JM extends paperback_extensions_common_1.Source {
         });
     }
     getViewMoreItems(homepageSectionId, metadata) {
+        var _a, _b, _c;
         return __awaiter(this, void 0, void 0, function* () {
-            if (metadata === null || metadata === void 0 ? void 0 : metadata.completed)
-                return metadata;
-            metadata = metadata !== null && metadata !== void 0 ? metadata : { page: 1, start: 0, total: 0 };
+            const page = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 1;
+            const start = (_b = metadata === null || metadata === void 0 ? void 0 : metadata.start) !== null && _b !== void 0 ? _b : 0;
+            const total = (_c = metadata === null || metadata === void 0 ? void 0 : metadata.total) !== null && _c !== void 0 ? _c : 0;
             const getMangaUrl = `${this.baseUrl}categories/filter`;
             const request = createRequestObject({
                 url: getMangaUrl,
@@ -7426,16 +7432,16 @@ class JM extends paperback_extensions_common_1.Source {
             });
             switch (homepageSectionId) {
                 case 'hot':
-                    request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mv&c=0&order=&page=${metadata.page}`;
+                    request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mv&c=0&order=&page=${page}`;
                     break;
                 case 'korea':
-                    request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=hanman&page=${metadata.page}`;
+                    request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=hanman&page=${page}`;
                     break;
                 case 'aman':
-                    request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&page=${metadata.page}`;
+                    request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&page=${page}`;
                     break;
                 case 'douren':
-                    request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=doujin&page=${metadata.page}`;
+                    request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=doujin&page=${page}`;
                     break;
                 default:
                     throw new Error('Requested to getViewMoreItems for a section ID which doesn\'t exist');
@@ -7443,14 +7449,30 @@ class JM extends paperback_extensions_common_1.Source {
             const json = yield this.requestManager.schedule(request, 1);
             const data = JSON.parse(json.data).data;
             const decodedData = (0, JMHelper_1.decode)(data);
-            const total = JSON.parse(decodedData).total;
-            const results = this.parser.parseViewMore(decodedData, metadata.start);
-            metadata = (metadata === null || metadata === void 0 ? void 0 : metadata.start) >= 80 ? { page: metadata.page + 1, start: 0, total: metadata.total + 10 } : { page: metadata.page, start: metadata.start + 10, total: metadata.total + 10 };
-            metadata = (metadata === null || metadata === void 0 ? void 0 : metadata.total) >= total ? undefined : metadata;
+            const resultTotal = JSON.parse(decodedData).total - 1;
+            const results = this.parser.parseViewMore(decodedData, start, resultTotal);
+            metadata = (metadata === null || metadata === void 0 ? void 0 : metadata.start) >= 80 ? { page: page + 1, start: 0, total: total + 10 } : { page: page, start: start + 10, total: total + 10 };
+            if (total >= resultTotal)
+                metadata = undefined;
             return createPagedResults({
                 results,
                 metadata
             });
+        });
+    }
+    getTags() {
+        return __awaiter(this, void 0, void 0, function* () {
+            const getMangaUrl = `${this.baseUrl}categories`;
+            const request = createRequestObject({
+                url: getMangaUrl,
+                param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}`,
+                headers: Object.assign(Object.assign({}, headers), (0, JMHelper_1.getToken)()),
+                method: 'GET'
+            });
+            const json = yield this.requestManager.schedule(request, 1);
+            const data = JSON.parse(json.data).data;
+            const decodedData = (0, JMHelper_1.decode)(data);
+            return this.parser.parseTags(decodedData) || [];
         });
     }
 }
@@ -7562,10 +7584,12 @@ class Parser {
         });
         return chapters;
     }
-    parseSearchResult($, start) {
+    parseSearchResult($, start, total) {
         const result = [];
         const parsedData = JSON.parse($).content;
         for (let i = start; i < start + 10; i++) {
+            if (i != 0 && i >= total)
+                break;
             const id = parsedData[i].id;
             const title = createIconText({ text: parsedData[i].name });
             const image = `${COVER_BASEURL}${parsedData[i].id}_3x4.jpg`;
@@ -7596,9 +7620,8 @@ class Parser {
         const decodedData = (0, JMHelper_1.decode)(parsedJson.data);
         const parsedData = JSON.parse(decodedData);
         for (let i = 0; i < 5; i++) {
-            const id = parsedData.content[i].id;
             tiles.push(createMangaTile({
-                id: id,
+                id: parsedData.content[i].id,
                 title: createIconText({ text: parsedData.content[i].name }),
                 subtitleText: createIconText({ text: parsedData.content[i].category.title }),
                 image: `${COVER_BASEURL}${parsedData.content[i].id}_3x4.jpg`
@@ -7606,10 +7629,12 @@ class Parser {
         }
         return tiles;
     }
-    parseViewMore($, start) {
+    parseViewMore($, start, total) {
         const tiles = [];
         const parsedData = JSON.parse($).content;
         for (let i = start; i < start + 10; i++) {
+            if (i >= total)
+                break;
             tiles.push(createMangaTile({
                 id: parsedData[i].id,
                 title: createIconText({ text: parsedData[i].name }),
@@ -7618,6 +7643,16 @@ class Parser {
             }));
         }
         return tiles;
+    }
+    parseTags($) {
+        const arrayTags = [];
+        const parsedData = JSON.parse($).categories;
+        console.log(parsedData);
+        parsedData.forEach((obj) => {
+            arrayTags.push({ id: obj.slug, label: obj.name });
+        });
+        const tagSections = [createTagSection({ id: '0', label: '分類', tags: arrayTags.map(x => createTag(x)) })];
+        return tagSections;
     }
 }
 exports.Parser = Parser;
