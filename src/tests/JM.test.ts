@@ -1,7 +1,7 @@
 import cheerio from 'cheerio'
 import {
     APIWrapper,
-    // SearchRequest,
+    SearchRequest,
     Source
 } from 'paperback-extensions-common'
 import { JM } from '../JM/JM'
@@ -60,31 +60,29 @@ describe('JMCOMIC Tests', () => {
     //     expect(data.pages, 'No pages present').to.be.not.empty
     // })
 
-    // it('Testing search', async () => {
-    //     const testSearch: SearchRequest = {
-    //         title: '繼母的朋友們',
-    //         parameters: {
-    //             includedTags: ['同人']
-    //         }
-    //     }
+    it('Testing search', async () => {
+        const testSearch: SearchRequest = {
+            title: '',
+            parameters: {
+                includedTags: ['hanman']
+            }
+        }
 
-    //     const search = await wrapper.searchRequest(source, testSearch, 1)
-    //     const result = search.results[0]
-    //     console.log(result)
+        const search = await wrapper.searchRequest(source, testSearch, 1)
+        const result = search.results[0]
+        expect(result, 'No response from server').to.exist
 
-    //     expect(result, 'No response from server').to.exist
-
-    //     expect(result?.id, 'No ID found for search query').to.be.not.empty
-    //     expect(result?.image, 'No image found for search').to.be.not.empty
-    //     expect(result?.title, 'No title').to.be.not.null
-    //     expect(result?.subtitleText, 'No subtitle text').to.be.not.null
-    // })
-
-    it('Testing Home-Page aquisition', async () => {
-        const homePages = await wrapper.getHomePageSections(source)
-        expect(homePages, 'No response from server').to.exist
-        expect(homePages[0]?.items, 'No items present').to.exist
+        expect(result?.id, 'No ID found for search query').to.be.not.empty
+        expect(result?.image, 'No image found for search').to.be.not.empty
+        expect(result?.title, 'No title').to.be.not.null
+        expect(result?.subtitleText, 'No subtitle text').to.be.not.null
     })
+
+    // it('Testing Home-Page aquisition', async () => {
+    //     const homePages = await wrapper.getHomePageSections(source)
+    //     expect(homePages, 'No response from server').to.exist
+    //     expect(homePages[0]?.items, 'No items present').to.exist
+    // })
 
     // it('Testing Notifications', async () => {
     //     const updates = await wrapper.filterUpdatedManga(source, new Date('2022-08-04'), ['43555'])

@@ -11,10 +11,13 @@ import {
     SourceInfo,
     ContentRating,
     HomeSectionType,
-    TagType
+    TagType,
+    TagSection
 } from 'paperback-extensions-common'
-import { decode,
-    getToken } from './JMHelper'
+import {
+    decode,
+    getToken
+} from './JMHelper'
 import { Parser } from './JMParser'
 
 export const BASE_URL = 'https://www.jmapibranch3.cc/'
@@ -73,11 +76,11 @@ export class JM extends Source {
         const request = createRequestObject({
             url: getMangaUrl,
             param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&comicName=${COMICNAME}&id=${mangaId}`,
-            headers: {...headers,...getToken()},
+            headers: { ...headers, ...getToken() },
             method: 'GET'
         })
         const json = await this.requestManager.schedule(request, 1)
-        const data  = JSON.parse(json.data).data
+        const data = JSON.parse(json.data).data
         return this.parser.parseMangaDetails(data, mangaId)
     }
 
@@ -86,12 +89,12 @@ export class JM extends Source {
         const request = createRequestObject({
             url: getMangaUrl,
             param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&comicName=${COMICNAME}&id=${mangaId}`,
-            headers: {...headers,...getToken()},
+            headers: { ...headers, ...getToken() },
             method: 'GET'
         })
         const json = await this.requestManager.schedule(request, 1)
-        const data  = JSON.parse(json.data).data
-        const chapters = this.parser.parseChapterList(data,mangaId)
+        const data = JSON.parse(json.data).data
+        const chapters = this.parser.parseChapterList(data, mangaId)
         return chapters
     }
 
@@ -110,36 +113,39 @@ export class JM extends Source {
 
 
     async getSearchResults(query: SearchRequest, metadata: any,): Promise<PagedResults> {
-        if (metadata?.completed) return metadata
         const url = `${this.baseUrl}search`
-        metadata = metadata?? {page: 1, start: 0,total:0} 
+        const page: number = metadata?.page ?? 1
+        const start: number = metadata?.start ?? 0
+        const total: number = metadata?.total ?? 0
         const request = createRequestObject({
             url: url,
-            param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&search_query=${encodeURIComponent(query.title!)}&page=${metadata.page}`,
-            headers: {...headers,...getToken()},
+            headers: { ...headers, ...getToken() },
             method: 'GET'
         })
+        if (query.title)
+            request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&search_query=${encodeURIComponent(query.title!)}&page=${page}`
         const json = await this.requestManager.schedule(request, 1)
-        const data  = JSON.parse(json.data).data
+        const data = JSON.parse(json.data).data
         const decodedData = decode(data)
-        const total = JSON.parse(decodedData).total
-        const results = this.parser.parseSearchResult(decodedData,metadata.start)
-        metadata = metadata?.start  >= 80 ? {page: metadata.page+1, start: 0,total:metadata.total+10} : {page: metadata.page, start: metadata.start+10,total:metadata.total+10} 
-        metadata = metadata?.total >= total ? undefined : metadata
-        return createPagedResults({results,
-            metadata})
+        const resultTotal = JSON.parse(decodedData).total - 1
+        const results = this.parser.parseSearchResult(decodedData, start, resultTotal)
+        metadata = metadata?.start >= 80 ? { page: page + 1, start: 0, total: total + 10 } : { page: page, start: start + 10, total: total + 10 }
+        if (total >= resultTotal) metadata = undefined
+        return createPagedResults({
+            results,
+            metadata
+        })
 
     }
 
     override async getHomePageSections(sectionCallback: (section: HomeSection) => void): Promise<void> {
-
         const getMangaUrl = `${this.baseUrl}categories/filter`
         const sections = [
             {
                 request: createRequestObject({
                     url: getMangaUrl,
                     param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mv&c=0&order=`,
-                    headers: {...headers,...getToken()},        
+                    headers: { ...headers, ...getToken() },
                     method: 'GET'
                 }),
                 section: createHomeSection({
@@ -153,7 +159,7 @@ export class JM extends Source {
                 request: createRequestObject({
                     url: getMangaUrl,
                     param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=hanman`,
-                    headers: {...headers,...getToken()},        
+                    headers: { ...headers, ...getToken() },
                     method: 'GET'
                 }),
                 section: createHomeSection({
@@ -167,7 +173,7 @@ export class JM extends Source {
                 request: createRequestObject({
                     url: getMangaUrl,
                     param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr`,
-                    headers: {...headers,...getToken()},        
+                    headers: { ...headers, ...getToken() },
                     method: 'GET'
                 }),
                 section: createHomeSection({
@@ -181,7 +187,7 @@ export class JM extends Source {
                 request: createRequestObject({
                     url: getMangaUrl,
                     param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=doujin`,
-                    headers: {...headers,...getToken()},        
+                    headers: { ...headers, ...getToken() },
                     method: 'GET'
                 }),
                 section: createHomeSection({
@@ -209,45 +215,62 @@ export class JM extends Source {
 
 
     override async getViewMoreItems(homepageSectionId: string, metadata: any): Promise<PagedResults> {
-        if (metadata?.completed) return metadata
-
-        metadata = metadata?? {page: 1, start: 0,total:0} 
+        const page: number = metadata?.page ?? 1
+        const start: number = metadata?.start ?? 0
+        const total: number = metadata?.total ?? 0
         const getMangaUrl = `${this.baseUrl}categories/filter`
-        const  request = createRequestObject({
+        const request = createRequestObject({
             url: getMangaUrl,
-            headers: {...headers,...getToken()},        
+            headers: { ...headers, ...getToken() },
             method: 'GET'
         })
         switch (homepageSectionId) {
             case 'hot':
-                request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mv&c=0&order=&page=${metadata.page}`
+                request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mv&c=0&order=&page=${page}`
                 break
             case 'korea':
-                request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=hanman&page=${metadata.page}`
+                request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=hanman&page=${page}`
 
                 break
             case 'aman':
-                request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&page=${metadata.page}`
+                request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&page=${page}`
 
                 break
             case 'douren':
-                request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=doujin&page=${metadata.page}`
+                request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=doujin&page=${page}`
 
                 break
             default:
                 throw new Error('Requested to getViewMoreItems for a section ID which doesn\'t exist')
         }
         const json = await this.requestManager.schedule(request, 1)
-        const data  = JSON.parse(json.data).data
+        const data = JSON.parse(json.data).data
         const decodedData = decode(data)
-        const total = JSON.parse(decodedData).total
-        const results = this.parser.parseViewMore(decodedData,metadata.start)
-        metadata = metadata?.start  >= 80 ? {page: metadata.page+1, start: 0,total:metadata.total+10} : {page: metadata.page, start: metadata.start+10,total:metadata.total+10} 
-        metadata = metadata?.total >= total ? undefined : metadata
+        const resultTotal = JSON.parse(decodedData).total -1
+        const results = this.parser.parseViewMore(decodedData, start,resultTotal)
+        metadata = metadata?.start >= 80 ? { page: page + 1, start: 0, total: total + 10 } : { page: page, start: start + 10, total: total + 10 }
+        if (total >= resultTotal) metadata = undefined
         return createPagedResults({
             results,
             metadata
         })
     }
-    
+
+
+
+    override async getTags(): Promise<TagSection[]> {
+        const getMangaUrl = `${this.baseUrl}categories`
+        const request = createRequestObject({
+            url: getMangaUrl,
+            param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}`,
+            headers: { ...headers, ...getToken() },
+            method: 'GET'
+        })
+
+        const json = await this.requestManager.schedule(request, 1)
+        const data = JSON.parse(json.data).data
+        const decodedData = decode(data)
+        return this.parser.parseTags(decodedData) || []
+    }
+
 }

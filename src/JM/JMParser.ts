@@ -12,7 +12,7 @@ import {
 import { decode } from './JMHelper'
 
 
-const COVER_BASEURL='https://cdn-msp.jmapiproxy1.cc/media/albums/'
+const COVER_BASEURL = 'https://cdn-msp.jmapiproxy1.cc/media/albums/'
 
 export interface UpdatedManga {
     ids: string[];
@@ -85,26 +85,28 @@ export class Parser {
 
 
 
-    parseSearchResult($: any, start : number): MangaTile[] {
+    parseSearchResult($: any, start: number, total:number): MangaTile[] {
         const result: MangaTile[] = []
-        const parsedData = JSON.parse($).content
-        for (let i = start; i < start+10; i++) {
-            const id: string = parsedData[i].id      
-            const title = createIconText({ text: parsedData[i].name})
+        const  parsedData = JSON.parse($).content
+        for (let i = start; i < start + 10; i++) {
+            if (i != 0 && i >= total) break
+            const id: string = parsedData[i].id
+            const title = createIconText({ text: parsedData[i].name })
+
             const image = `${COVER_BASEURL}${parsedData[i].id}_3x4.jpg`
             result.push(createMangaTile({
                 id: id,
                 title: title,
                 image: image
-            }))   
+            }))
         }
         return result
     }
 
     parseChapterDetails($: string, mangaId: string, chapterId: string): ChapterDetails {
         const parsedData = JSON.parse($)
-        const pages:any=[]
-        parsedData.urls.forEach((obj:any) => {
+        const pages: any = []
+        parsedData.urls.forEach((obj: any) => {
             pages.push(obj)
         })
         return createChapterDetails({
@@ -122,32 +124,42 @@ export class Parser {
         const decodedData = decode(parsedJson.data)
         const parsedData = JSON.parse(decodedData)
         for (let i = 0; i < 5; i++) {
-            const id: string = parsedData.content[i].id
             tiles.push(createMangaTile({
-                id: id,
-                title: createIconText({text:parsedData.content[i].name}),
+                id: parsedData.content[i].id,
+                title: createIconText({ text: parsedData.content[i].name }),
                 subtitleText: createIconText({ text: parsedData.content[i].category.title }),
                 image: `${COVER_BASEURL}${parsedData.content[i].id}_3x4.jpg`
             }))
         }
-        
         return tiles
     }
 
 
-    parseViewMore($: any,start:number): MangaTile[] {
+    parseViewMore($: any, start: number,total:number): MangaTile[] {
         const tiles: MangaTile[] = []
         const parsedData = JSON.parse($).content
-        for (let i = start; i < start+10; i++) {
-            
+        for (let i = start; i < start + 10; i++) {
+            if (i >= total) break
             tiles.push(createMangaTile({
                 id: parsedData[i].id,
-                title: createIconText({text: parsedData[i].name}),
+                title: createIconText({ text: parsedData[i].name }),
                 subtitleText: createIconText({ text: parsedData[i].category.title }),
                 image: `${COVER_BASEURL}${parsedData[i].id}_3x4.jpg`
             }))
         }
         return tiles
+    }
+
+    parseTags($:string):TagSection[]|null{
+        const arrayTags: Tag[] = []
+        const parsedData = JSON.parse($).categories
+        console.log(parsedData)
+        
+        parsedData.forEach((obj:any) => {
+            arrayTags.push({id:obj.slug,label:obj.name})
+        })
+        const tagSections: TagSection[] = [createTagSection({ id: '0', label: '分類', tags: arrayTags.map(x => createTag(x)) })]
+        return tagSections
     }
 
 }
