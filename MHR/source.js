@@ -1122,7 +1122,7 @@ exports.MHRInfo = {
     description: '漫畫人',
     author: 'kpwa',
     authorWebsite: 'https://github.com/kpmulillyc',
-    icon: "favicon.ico",
+    icon: 'favicon.ico',
     websiteBaseURL: exports.MHR_DOMAIN,
     sourceTags: [
         {
@@ -1141,12 +1141,12 @@ class MHR extends paperback_extensions_common_1.Source {
             interceptor: {
                 interceptRequest: (request) => __awaiter(this, void 0, void 0, function* () {
                     request.headers = {
-                        'user-agent': "okhttp/3.12.13",
-                        'referer': "http://www.dm5.com/dm5api/",
-                        'clubReferer': "http://hk.mangaapi.manhuaren.com/",
+                        'user-agent': 'okhttp/3.12.13',
+                        'referer': 'http://www.dm5.com/dm5api/',
+                        'clubReferer': 'http://hk.mangaapi.manhuaren.com/',
                         'X-Yq-Key': '438166431',
-                        'X-Yq-Yqpp': `{"flg":"","ac":"","cut":"GMT+8","laut":"0","fcc":"","flcc":"","ciso":"us","lcc":"","lot":"","lcn":"","flat":"","flot":"","lat":""}`,
-                        'X-Yq-Yqci': `{"at":-1,"av":"5.7.1.2","cl":"dm5","cy":"US","di":"-26,-64,-25,-72,38,-17,-6,109,88,60,-96,-74,77,12,66,-19,-38,70,106,121,-15,-13,16,-115,102,35,74,-75,103,97,70,51","dm":"Android SDK built for x86","fcl":"dm5","ft":"bsr","fut":"1659456508000","le":"en","ln":"","lut":"1659456508000","nt":1,"os":1,"ov":"30_11","pt":"com.ilike.cartoon","rn":"1440x2392","st":1}`
+                        'X-Yq-Yqpp': '{"flg":"","ac":"","cut":"GMT+8","laut":"0","fcc":"","flcc":"","ciso":"us","lcc":"","lot":"","lcn":"","flat":"","flot":"","lat":""}',
+                        'X-Yq-Yqci': '{"at":-1,"av":"5.7.1.2","cl":"dm5","cy":"US","di":"-26,-64,-25,-72,38,-17,-6,109,88,60,-96,-74,77,12,66,-19,-38,70,106,121,-15,-13,16,-115,102,35,74,-75,103,97,70,51","dm":"Android SDK built for x86","fcl":"dm5","ft":"bsr","fut":"1659456508000","le":"en","ln":"","lut":"1659456508000","nt":1,"os":1,"ov":"30_11","pt":"com.ilike.cartoon","rn":"1440x2392","st":1}'
                     };
                     return request;
                 }),
@@ -1155,7 +1155,7 @@ class MHR extends paperback_extensions_common_1.Source {
                 })
             }
         });
-        this.baseUrl = "http://hk.mangaapi.manhuaren.com";
+        this.baseUrl = 'http://hk.mangaapi.manhuaren.com';
         this.parser = new MHRParser_1.Parser();
         this.helper = new MHRHelper_1.MHRHelper();
     }
@@ -1166,9 +1166,9 @@ class MHR extends paperback_extensions_common_1.Source {
         return __awaiter(this, void 0, void 0, function* () {
             let getMangaUrl = `${this.baseUrl}/v1/manga/getDetail?`;
             const params = this.helper.paramBuilder();
-            params["mangaId"] = mangaId;
+            params['mangaId'] = mangaId;
             getMangaUrl = this.helper.urlBuilder(getMangaUrl, params);
-            let request = createRequestObject({
+            const request = createRequestObject({
                 url: getMangaUrl,
                 method: 'GET'
             });
@@ -1180,14 +1180,14 @@ class MHR extends paperback_extensions_common_1.Source {
         return __awaiter(this, void 0, void 0, function* () {
             let getChapterUrl = `${this.baseUrl}/v1/manga/getSections?`;
             const params = this.helper.paramBuilder();
-            params["mangaId"] = mangaId;
+            params['mangaId'] = mangaId;
             getChapterUrl = this.helper.urlBuilder(getChapterUrl, params);
-            let request = createRequestObject({
+            const request = createRequestObject({
                 url: getChapterUrl,
                 method: 'GET'
             });
             const data = yield this.requestManager.schedule(request, 1);
-            let chapters = this.parser.parseChapterList(data.data, mangaId);
+            const chapters = this.parser.parseChapterList(data.data, mangaId);
             return chapters;
         });
     }
@@ -1195,16 +1195,16 @@ class MHR extends paperback_extensions_common_1.Source {
         return __awaiter(this, void 0, void 0, function* () {
             let detailsUrl = `${this.baseUrl}/v1/manga/getRead?`;
             const params = this.helper.paramBuilder();
-            params["mangaSectionId"] = chapterId;
-            params["netType"] = "1";
-            params["loadreal"] = "1";
-            params["imageQuality"] = "2";
+            params['mangaSectionId'] = chapterId;
+            params['netType'] = '1';
+            params['loadreal'] = '1';
+            params['imageQuality'] = '2';
             detailsUrl = this.helper.urlBuilder(detailsUrl, params);
-            let request = createRequestObject({
+            const request = createRequestObject({
                 url: detailsUrl,
                 method: 'GET',
             });
-            let data = yield this.requestManager.schedule(request, 1);
+            const data = yield this.requestManager.schedule(request, 1);
             return this.parser.parseChapterDetails(data.data, mangaId, chapterId);
         });
     }
@@ -1219,18 +1219,18 @@ class MHR extends paperback_extensions_common_1.Source {
             if (metadata === null || metadata === void 0 ? void 0 : metadata.completed)
                 return metadata;
             const page = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 0;
-            let searchUrl = this.baseUrl + "/v1/search/getSearchManga?";
+            let searchUrl = this.baseUrl + '/v1/search/getSearchManga?';
             let params = this.helper.paramBuilder();
             if (query.title) {
-                params["start"] = page.toString();
-                params["limit"] = "20";
-                params["keywords"] = query.title;
+                params['start'] = page.toString();
+                params['limit'] = '20';
+                params['keywords'] = query.title;
                 searchUrl = this.helper.urlBuilder(searchUrl, params);
-                let request = createRequestObject({
+                const request = createRequestObject({
                     url: searchUrl,
                     method: 'GET'
                 });
-                let data = yield this.requestManager.schedule(request, 1);
+                const data = yield this.requestManager.schedule(request, 1);
                 metadata = !this.parser.isLastPage(data.data, false) ? { page: page + 20 } : undefined;
                 const tiles = this.parser.parseSearchResult(data.data);
                 return createPagedResults({
@@ -1242,16 +1242,16 @@ class MHR extends paperback_extensions_common_1.Source {
                 const queryTag = (_b = query === null || query === void 0 ? void 0 : query.includedTags) === null || _b === void 0 ? void 0 : _b.map((x) => x.id)[0];
                 searchUrl = `${this.baseUrl}/v2/manga/getCategoryMangas?`;
                 params = this.helper.homePageParamBuilder();
-                params["subCategoryType"] = queryTag.slice(0, 1);
-                params["subCategoryId"] = queryTag.slice(1);
-                params["start"] = page.toString();
-                params["limit"] = "20";
+                params['subCategoryType'] = queryTag.slice(0, 1);
+                params['subCategoryId'] = queryTag.slice(1);
+                params['start'] = page.toString();
+                params['limit'] = '20';
                 searchUrl = this.helper.urlBuilder(searchUrl, params);
-                let request = createRequestObject({
+                const request = createRequestObject({
                     url: searchUrl,
                     method: 'GET'
                 });
-                let data = yield this.requestManager.schedule(request, 1);
+                const data = yield this.requestManager.schedule(request, 1);
                 metadata = !this.parser.isLastPage(data.data, true) ? { page: page + 20 } : undefined;
                 const tiles = this.parser.parseHomeSection(data.data);
                 return createPagedResults({
@@ -1263,15 +1263,15 @@ class MHR extends paperback_extensions_common_1.Source {
     }
     getHomePageSections(sectionCallback) {
         return __awaiter(this, void 0, void 0, function* () {
-            let homePageUrl = `${this.baseUrl}/v2/manga/getSectionMangaList?`;
+            const homePageUrl = `${this.baseUrl}/v2/manga/getSectionMangaList?`;
             const popularParams = this.helper.homePageParamBuilder();
             const featureParams = this.helper.homePageParamBuilder();
             const hotParams = this.helper.homePageParamBuilder();
             const hotEndParams = this.helper.homePageParamBuilder();
-            popularParams["sectionId"] = "701";
-            featureParams["sectionId"] = "491";
-            hotParams["sectionId"] = "501";
-            hotEndParams["sectionId"] = "1051";
+            popularParams['sectionId'] = '701';
+            featureParams['sectionId'] = '491';
+            hotParams['sectionId'] = '501';
+            hotEndParams['sectionId'] = '1051';
             const popularUrl = this.helper.urlBuilder(homePageUrl, popularParams);
             const lastUpdateUrl = this.helper.urlBuilder(homePageUrl, featureParams);
             const hotNewUrl = this.helper.urlBuilder(homePageUrl, hotParams);
@@ -1345,20 +1345,20 @@ class MHR extends paperback_extensions_common_1.Source {
             const page = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 0;
             let homePageUrl = `${this.baseUrl}/v2/manga/getSectionMangaList?`;
             const params = this.helper.homePageParamBuilder();
-            params["start"] = page.toString();
-            params["limit"] = "20";
+            params['start'] = page.toString();
+            params['limit'] = '20';
             switch (homepageSectionId) {
-                case "popular":
-                    params["sectionId"] = "701";
+                case 'popular':
+                    params['sectionId'] = '701';
                     break;
-                case "updates":
-                    params["sectionId"] = "491";
+                case 'updates':
+                    params['sectionId'] = '491';
                     break;
-                case "hotNew":
-                    params["sectionId"] = "501";
+                case 'hotNew':
+                    params['sectionId'] = '501';
                     break;
-                case "hotEnd":
-                    params["sectionId"] = "1051";
+                case 'hotEnd':
+                    params['sectionId'] = '1051';
                     break;
                 default:
                     throw new Error('Requested to getViewMoreItems for a section ID which doesn\'t exist');
@@ -1387,8 +1387,8 @@ class MHR extends paperback_extensions_common_1.Source {
             while (updatedManga.loadMore) {
                 let updateUrl = `${this.baseUrl}/v1/manga/getUpdate?`;
                 const params = this.helper.homePageParamBuilder();
-                params["limit"] = "100";
-                params["start"] = page.toString();
+                params['limit'] = '100';
+                params['start'] = page.toString();
                 updateUrl = this.helper.urlBuilder(updateUrl, params);
                 const request = createRequestObject({
                     url: updateUrl,
@@ -1413,80 +1413,79 @@ exports.MHR = MHR;
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.MHRHelper = void 0;
 const md5_1 = require("ts-md5/dist/md5");
-const C = "4e0a48e1c0b54041bce9c8f0e036124d";
+const C = '4e0a48e1c0b54041bce9c8f0e036124d';
 class MHRHelper {
     urlBuilder(url, params) {
         const hashStr = this.generateGSNHash(params);
-        params["gsn"] = hashStr;
+        params['gsn'] = hashStr;
         for (const key in params) {
-            url += key + "=";
+            url += key + '=';
             url += this.requestEncode(params[key]);
-            url += "&";
+            url += '&';
         }
         return url.slice(0, -1);
     }
     paramBuilder() {
         const timeElapsed = Date.now();
         const today = new Date(timeElapsed);
-        const now = today.toISOString().replace("T", "+").slice(0, -5);
+        const now = today.toISOString().replace('T', '+').slice(0, -5);
         const params = {
-            "gac": "",
-            "gak": "android_manhuaren2",
-            "gat": "",
-            "gaui": "438166431",
-            "gav": "5.7.1.2",
-            "gciso": "us",
-            "gcl": "dm5",
-            "gcut": "GMT+8",
-            "gcy": "US",
-            "gdi": "-26,-64,-25,-72,38,-17,-6,109,88,60,-96,-74,77,12,66,-19,-38,70,106,121,-15,-13,16,-115,102,35,74,-75,103,97,70,51",
-            "gfcc": "",
-            "gfcl": "dm5",
-            "gflat": "",
-            "gflcc": "",
-            "gflg": "",
-            "gflot": "",
-            "gft": "json",
-            "gfut": "1659456508000",
-            "glat": "",
-            "glbsaut": "0",
-            "glcc": "",
-            "glcn": "",
-            "gle": "en",
-            "gln": "",
-            "glot": "",
-            "glut": "1659456508000",
-            "gos": "1",
-            "gov": "30_11",
-            "gpt": "com.ilike.cartoon",
-            "gsm": "md5",
-            "gts": now,
-            "gui": "438166431",
-            "gut": "0"
+            'gac': '',
+            'gak': 'android_manhuaren2',
+            'gat': '',
+            'gaui': '438166431',
+            'gav': '5.7.1.2',
+            'gciso': 'us',
+            'gcl': 'dm5',
+            'gcut': 'GMT+8',
+            'gcy': 'US',
+            'gdi': '-26,-64,-25,-72,38,-17,-6,109,88,60,-96,-74,77,12,66,-19,-38,70,106,121,-15,-13,16,-115,102,35,74,-75,103,97,70,51',
+            'gfcc': '',
+            'gfcl': 'dm5',
+            'gflat': '',
+            'gflcc': '',
+            'gflg': '',
+            'gflot': '',
+            'gft': 'json',
+            'gfut': '1659456508000',
+            'glat': '',
+            'glbsaut': '0',
+            'glcc': '',
+            'glcn': '',
+            'gle': 'en',
+            'gln': '',
+            'glot': '',
+            'glut': '1659456508000',
+            'gos': '1',
+            'gov': '30_11',
+            'gpt': 'com.ilike.cartoon',
+            'gsm': 'md5',
+            'gts': now,
+            'gui': '438166431',
+            'gut': '0'
         };
         return params;
     }
     homePageParamBuilder() {
         const params = this.paramBuilder();
-        params["start"] = "0";
-        params["limit"] = "5";
+        params['start'] = '0';
+        params['limit'] = '5';
         return params;
     }
     generateGSNHash(params) {
-        let s = C + "GET";
+        let s = C + 'GET';
         const sortedObj = Object.fromEntries(Object.entries(params).sort());
-        for (let key in sortedObj) {
-            if (key != "gsn") {
+        for (const key in sortedObj) {
+            if (key != 'gsn') {
                 s += key;
                 s += this.requestEncode(sortedObj[key]);
             }
         }
-        ;
         s += C;
         return md5_1.Md5.hashStr(s);
     }
     requestEncode(timeStr) {
-        return encodeURIComponent(timeStr.replace("%7E", "~").replace("*", "%2A"));
+        return encodeURIComponent(timeStr.replace('%7E', '~').replace('*', '%2A'));
     }
 }
 exports.MHRHelper = MHRHelper;
@@ -1523,42 +1522,42 @@ class Parser {
         };
         this.parseTags = () => {
             const arrayTags = [];
-            arrayTags.push({ id: "031", label: "熱血" });
-            arrayTags.push({ id: "026", label: "戀愛" });
-            arrayTags.push({ id: "01", label: "校園" });
-            arrayTags.push({ id: "03", label: "百合" });
-            arrayTags.push({ id: "027", label: "耽美" });
-            arrayTags.push({ id: "05", label: "偽娘" });
-            arrayTags.push({ id: "02", label: "冒險" });
-            arrayTags.push({ id: "06", label: "職場" });
-            arrayTags.push({ id: "08", label: "後宮" });
-            arrayTags.push({ id: "09", label: "治愈" });
-            arrayTags.push({ id: "025", label: "科幻" });
-            arrayTags.push({ id: "010", label: "勵志" });
-            arrayTags.push({ id: "011", label: "生活" });
-            arrayTags.push({ id: "012", label: "戰爭" });
-            arrayTags.push({ id: "017", label: "懸疑" });
-            arrayTags.push({ id: "033", label: "推理" });
-            arrayTags.push({ id: "037", label: "搞笑" });
-            arrayTags.push({ id: "014", label: "奇幻" });
-            arrayTags.push({ id: "015", label: "魔法" });
-            arrayTags.push({ id: "029", label: "恐怖" });
-            arrayTags.push({ id: "020", label: "神鬼" });
-            arrayTags.push({ id: "021", label: "萌系" });
-            arrayTags.push({ id: "04", label: "歷史" });
-            arrayTags.push({ id: "07", label: "美食" });
-            arrayTags.push({ id: "030", label: "同人" });
-            arrayTags.push({ id: "034", label: "運動" });
-            arrayTags.push({ id: "036", label: "紳士" });
-            arrayTags.push({ id: "040", label: "機甲" });
-            arrayTags.push({ id: "235", label: "港台" });
-            arrayTags.push({ id: "236", label: "日韓" });
-            arrayTags.push({ id: "237", label: "大陸" });
-            arrayTags.push({ id: "252", label: "歐美" });
-            arrayTags.push({ id: "061", label: "限制級" });
-            arrayTags.push({ id: "11", label: "少年向" });
-            arrayTags.push({ id: "12", label: "少女向" });
-            arrayTags.push({ id: "13", label: "青年向" });
+            arrayTags.push({ id: '031', label: '熱血' });
+            arrayTags.push({ id: '026', label: '戀愛' });
+            arrayTags.push({ id: '01', label: '校園' });
+            arrayTags.push({ id: '03', label: '百合' });
+            arrayTags.push({ id: '027', label: '耽美' });
+            arrayTags.push({ id: '05', label: '偽娘' });
+            arrayTags.push({ id: '02', label: '冒險' });
+            arrayTags.push({ id: '06', label: '職場' });
+            arrayTags.push({ id: '08', label: '後宮' });
+            arrayTags.push({ id: '09', label: '治愈' });
+            arrayTags.push({ id: '025', label: '科幻' });
+            arrayTags.push({ id: '010', label: '勵志' });
+            arrayTags.push({ id: '011', label: '生活' });
+            arrayTags.push({ id: '012', label: '戰爭' });
+            arrayTags.push({ id: '017', label: '懸疑' });
+            arrayTags.push({ id: '033', label: '推理' });
+            arrayTags.push({ id: '037', label: '搞笑' });
+            arrayTags.push({ id: '014', label: '奇幻' });
+            arrayTags.push({ id: '015', label: '魔法' });
+            arrayTags.push({ id: '029', label: '恐怖' });
+            arrayTags.push({ id: '020', label: '神鬼' });
+            arrayTags.push({ id: '021', label: '萌系' });
+            arrayTags.push({ id: '04', label: '歷史' });
+            arrayTags.push({ id: '07', label: '美食' });
+            arrayTags.push({ id: '030', label: '同人' });
+            arrayTags.push({ id: '034', label: '運動' });
+            arrayTags.push({ id: '036', label: '紳士' });
+            arrayTags.push({ id: '040', label: '機甲' });
+            arrayTags.push({ id: '235', label: '港台' });
+            arrayTags.push({ id: '236', label: '日韓' });
+            arrayTags.push({ id: '237', label: '大陸' });
+            arrayTags.push({ id: '252', label: '歐美' });
+            arrayTags.push({ id: '061', label: '限制級' });
+            arrayTags.push({ id: '11', label: '少年向' });
+            arrayTags.push({ id: '12', label: '少女向' });
+            arrayTags.push({ id: '13', label: '青年向' });
             const tagSections = [createTagSection({ id: '0', label: '分頪', tags: arrayTags.map(x => createTag(x)) })];
             return tagSections;
         };
@@ -1569,7 +1568,7 @@ class Parser {
         const status = this.mangaStatus(parsedData.mangaIsOver);
         const author = converter(parsedData.mangaAuthors.toString());
         const titles = converter(parsedData.mangaName);
-        const image = parsedData.mangaCoverimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg";
+        const image = parsedData.mangaCoverimageUrl || 'http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg';
         const rating = parsedData.mangaGrade;
         const tagArray = [];
         let tagId = 1;
@@ -1578,10 +1577,10 @@ class Parser {
             tagArray.push({ id: tagId.toString(), label: tag });
             tagId++;
         });
-        const tags = [createTagSection({ id: "0", label: "genres", tags: tagArray.map(x => createTag(x)) })];
+        const tags = [createTagSection({ id: '0', label: 'genres', tags: tagArray.map(x => createTag(x)) })];
         const views = parsedData.mangaHot;
         const lastUpdate = parsedData.mangaNewestTime;
-        const covers = parsedData.mangaPicimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg";
+        const covers = parsedData.mangaPicimageUrl || 'http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg';
         const langFlag = paperback_extensions_common_1.LanguageCode.CHINEESE_HONGKONG;
         return createManga({
             id: mangaId,
@@ -1610,7 +1609,7 @@ class Parser {
         const chapters = [];
         parsedData.mangaWords.forEach((obj) => {
             const id = obj.sectionId.toString();
-            const name = obj.isMustPay == 1 ? "鎖 " : "" + this.getChapterName("mangaWords", obj.sectionName, obj.sectionTitle);
+            const name = obj.isMustPay == 1 ? '鎖 ' : '' + this.getChapterName('mangaWords', obj.sectionName, obj.sectionTitle);
             const time = new Date(obj.releaseTime);
             const chapNum = parseFloat(obj.sectionSort);
             chapters.push(createChapter({
@@ -1624,7 +1623,7 @@ class Parser {
         });
         parsedData.mangaRolls.forEach((obj) => {
             const id = obj.sectionId.toString();
-            const name = obj.isMustPay == 1 ? "鎖" : "" + this.getChapterName("mangaWords", obj.sectionName, obj.sectionTitle);
+            const name = obj.isMustPay == 1 ? '鎖' : '' + this.getChapterName('mangaWords', obj.sectionName, obj.sectionTitle);
             const time = new Date(obj.releaseTime);
             const chapNum = parseFloat(obj.sectionSort);
             chapters.push(createChapter({
@@ -1638,7 +1637,7 @@ class Parser {
         });
         parsedData.mangaEpisode.forEach((obj) => {
             const id = obj.sectionId.toString();
-            const name = obj.isMustPay == 1 ? "鎖" : "" + this.getChapterName("mangaWords", obj.sectionName, obj.sectionTitle);
+            const name = obj.isMustPay == 1 ? '鎖' : '' + this.getChapterName('mangaWords', obj.sectionName, obj.sectionTitle);
             const time = new Date(obj.releaseTime);
             const chapNum = parseFloat(obj.sectionSort);
             chapters.push(createChapter({
@@ -1655,10 +1654,10 @@ class Parser {
     parseSearchResult($) {
         const result = [];
         const parsedData = JSON.parse($);
-        for (let obj of parsedData.response.result) {
+        for (const obj of parsedData.response.result) {
             const id = obj.mangaId.toString();
             const title = createIconText({ text: converter(obj.mangaName) });
-            const image = obj.mangaCoverimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg";
+            const image = obj.mangaPicimageUrl || 'http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg';
             result.push(createMangaTile({
                 id: id,
                 title: title,
@@ -1688,7 +1687,7 @@ class Parser {
         parsedData.mangas.forEach((obj) => {
             const id = obj.mangaId.toString();
             const title = createIconText({ text: converter(obj.mangaName) });
-            const image = obj.mangaCoverimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg";
+            const image = obj.mangaCoverimageUrl || 'http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg';
             const subtitle = converter(obj.mangaNewestContent);
             tiles.push(createMangaTile({
                 id: id,
@@ -1705,7 +1704,7 @@ class Parser {
         parsedData.mangas.forEach((obj) => {
             const id = obj.mangaId.toString();
             const title = createIconText({ text: converter(obj.mangaName) });
-            const image = obj.mangaCoverimageUrl || "http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg";
+            const image = obj.mangaPicimageUrl || 'http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg';
             const subtitle = converter(obj.mangaNewestContent);
             tiles.push(createMangaTile({
                 id: id,
@@ -1717,10 +1716,10 @@ class Parser {
         return tiles;
     }
     getChapterName(type, name, title) {
-        let final = "";
-        final += type == "mangaEpisode" ? "[番外] " : "";
-        final += converter(name) + " ";
-        final += title == "" ? "" : converter(title);
+        let final = '';
+        final += type == 'mangaEpisode' ? '[番外] ' : '';
+        final += converter(name) + ' ';
+        final += title == '' ? '' : converter(title);
         return final;
     }
     isLastPage($, home) {

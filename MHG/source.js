@@ -2922,7 +2922,7 @@ exports.MHGInfo = {
     description: 'ManHuaGui',
     author: 'kpwa',
     authorWebsite: 'https://kpmulillyc.github.io/',
-    icon: "favicon.ico",
+    icon: 'favicon.ico',
     websiteBaseURL: 'https://kpmulillyc.github.io/',
     contentRating: paperback_extensions_common_1.ContentRating.EVERYONE,
 };
@@ -2971,7 +2971,7 @@ class MHG extends paperback_extensions_common_1.Source {
         return __awaiter(this, void 0, void 0, function* () {
             const request = createRequestObject({
                 url: `${MHG_DOMAIN}/comic/${mangaId}/`,
-                method: "GET"
+                method: 'GET'
             });
             const data = yield this.requestManager.schedule(request, 1);
             const $ = this.cheerio.load(data.data);
@@ -3002,7 +3002,7 @@ class MHG extends paperback_extensions_common_1.Source {
         var _b;
         return __awaiter(this, void 0, void 0, function* () {
             let _a;
-            let page = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 1;
+            const page = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 1;
             let searchUrl = '';
             if (query.title) {
                 searchUrl = `${MHG_DOMAIN}/s/${encodeURI((_b = query.title) !== null && _b !== void 0 ? _b : '')}_p${page}.html`;
@@ -3084,7 +3084,7 @@ class Parser {
     parseChapterList($, mangaId) {
         const chapters = [];
         const chapArray = $('ul > li > a.status0').toArray();
-        chapArray.forEach(obj => {
+        chapArray.forEach((obj) => {
             var _a, _b, _c, _d;
             const chapterId = (_a = $(obj).attr('href')) === null || _a === void 0 ? void 0 : _a.replace(`/comic/${mangaId}/`, '').replace('.html', '').trim();
             const chapName = (_b = $(obj).attr('title')) === null || _b === void 0 ? void 0 : _b.trim();
@@ -3214,7 +3214,7 @@ class Parser {
         }
         return tiles;
     }
-    // parseTags($: CheerioSelector): TagSection[] {
+    // parseTags($: any): TagSection[] {
     //     const tagSections: TagSection[] = []
     //     const typeList: string[] = ['剧情', '进度', '地区', '字母']
     //     for (const obj in typeList) {
@@ -3233,7 +3233,7 @@ class Parser {
     //     }
     //     return tagSections
     // }
-    // getUpdatedManga($: CheerioSelector, time: Date): string[] {
+    // getUpdatedManga($: any, time: Date): string[] {
     //     const updatedMange: string[] = []
     //     const mangaList = $('ul#contList').text() !== '' ? $('ul#contList') : $('ul[class="rank-list clearfix"]')
     //     for (const obj of $('li', mangaList).toArray()) {
