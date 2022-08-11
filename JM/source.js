@@ -7275,7 +7275,7 @@ class JM extends paperback_extensions_common_1.Source {
         this.parser = new JMParser_1.Parser();
     }
     getMangaShareUrl(mangaId) {
-        return `${exports.BASE_URL}${mangaId}`;
+        return `https://18comic.vip/album/${mangaId}`;
     }
     getMangaDetails(mangaId) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -7381,13 +7381,13 @@ class JM extends paperback_extensions_common_1.Source {
                 {
                     request: createRequestObject({
                         url: getMangaUrl,
-                        param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr`,
+                        param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=meiman`,
                         headers: Object.assign(Object.assign({}, headers), (0, JMHelper_1.getToken)()),
                         method: 'GET'
                     }),
                     section: createHomeSection({
-                        id: 'aman',
-                        title: 'A漫',
+                        id: 'meiman',
+                        title: '美漫',
                         view_more: true,
                         type: paperback_extensions_common_1.HomeSectionType.singleRowNormal
                     }),
@@ -7395,13 +7395,13 @@ class JM extends paperback_extensions_common_1.Source {
                 {
                     request: createRequestObject({
                         url: getMangaUrl,
-                        param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=doujin`,
+                        param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=short`,
                         headers: Object.assign(Object.assign({}, headers), (0, JMHelper_1.getToken)()),
                         method: 'GET'
                     }),
                     section: createHomeSection({
-                        id: 'douren',
-                        title: '同人',
+                        id: 'short',
+                        title: '短篇',
                         view_more: true,
                         type: paperback_extensions_common_1.HomeSectionType.singleRowNormal
                     }),
@@ -7437,11 +7437,11 @@ class JM extends paperback_extensions_common_1.Source {
                 case 'korea':
                     request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=hanman&page=${page}`;
                     break;
-                case 'aman':
-                    request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&page=${page}`;
+                case 'meiman':
+                    request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=meimanpage=${page}`;
                     break;
-                case 'douren':
-                    request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=doujin&page=${page}`;
+                case 'short':
+                    request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=short&page=${page}`;
                     break;
                 default:
                     throw new Error('Requested to getViewMoreItems for a section ID which doesn\'t exist');
@@ -7647,7 +7647,6 @@ class Parser {
     parseTags($) {
         const arrayTags = [];
         const parsedData = JSON.parse($).categories;
-        console.log(parsedData);
         parsedData.forEach((obj) => {
             arrayTags.push({ id: obj.slug, label: obj.name });
         });
