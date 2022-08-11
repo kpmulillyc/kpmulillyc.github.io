@@ -12,7 +12,7 @@ import LZString from 'lz-string'
 //
 export class Parser {
 
-    parseMangaDetails($: CheerioSelector, mangaId: string): Manga {
+    parseMangaDetails($: any, mangaId: string): Manga {
         const mainTitle = $('div.book-title > h1').text().trim()
         const desc = $('div#intro-all').text().trim()
         const image = 'http://' + $('p.hcover > img').attr('src')?.replace('//', '') ?? ''
@@ -34,10 +34,10 @@ export class Parser {
         return MangaStatus.UNKNOWN
     }
 
-    parseChapterList($: CheerioSelector, mangaId: string): Chapter[] {
+    parseChapterList($: any, mangaId: string): Chapter[] {
         const chapters: Chapter[] = []
         const chapArray = $('ul > li > a.status0').toArray()
-        chapArray.forEach(obj => {
+        chapArray.forEach((obj:any) => {
             const chapterId = $(obj).attr('href')?.replace(`/comic/${mangaId}/`, '').replace('.html', '').trim()
             const chapName = $(obj).attr('title')?.trim()
             const chapNum = parseFloat((chapName!.match(/[\d.]+/) ?? ['0'])[0] ?? '0')
@@ -53,7 +53,7 @@ export class Parser {
         return chapters
     }
 
-    parseChapterDetails($: CheerioStatic): string[] {
+    parseChapterDetails($: any): string[] {
         const pages: string[] = []
         const htmlMatch = $.html().match(/;\}\('(.*;)',(\d*),(\d*),'(.*)'\['/)!
         let tmp = ''
@@ -72,7 +72,7 @@ export class Parser {
         if (!''.replace(/^/, String)) { while (c--) d[e(c)] = k[c] || e(c); k = [function (e: any) { return d[e] }]; e = function () { return '\\w+' }; c = 1 } while (c--) if (k[c]) p = p.replace(new RegExp('\\b' + e(c) + '\\b', 'g'), k[c]); return p
     }
 
-    parseHomeSections($: CheerioSelector, sectionCallback: (section: HomeSection) => void): void {
+    parseHomeSections($: any, sectionCallback: (section: HomeSection) => void): void {
         const section1 = createHomeSection({ id: '1', title: '熱門連載漫畫', type: HomeSectionType.singleRowLarge, view_more: false })
         const section6 = createHomeSection({ id: '6', title: '日排行', type: HomeSectionType.singleRowNormal, view_more: false })
         const section7 = createHomeSection({ id: '7', title: '週排行', type: HomeSectionType.singleRowNormal, view_more: false })
@@ -143,7 +143,7 @@ export class Parser {
         return tiles
     }
 
-    parseSearchResult($: CheerioSelector): MangaTile[] {
+    parseSearchResult($: any): MangaTile[] {
         const tiles: MangaTile[] = []
         const mangaArray = $('dt').toArray()
         const coverArray = $('img').toArray()
@@ -163,7 +163,7 @@ export class Parser {
         return tiles
     }
 
-    // parseTags($: CheerioSelector): TagSection[] {
+    // parseTags($: any): TagSection[] {
     //     const tagSections: TagSection[] = []
     //     const typeList: string[] = ['剧情', '进度', '地区', '字母']
     //     for (const obj in typeList) {
@@ -183,7 +183,7 @@ export class Parser {
     //     return tagSections
     // }
 
-    // getUpdatedManga($: CheerioSelector, time: Date): string[] {
+    // getUpdatedManga($: any, time: Date): string[] {
     //     const updatedMange: string[] = []
     //     const mangaList = $('ul#contList').text() !== '' ? $('ul#contList') : $('ul[class="rank-list clearfix"]')
     //     for (const obj of $('li', mangaList).toArray()) {
@@ -202,7 +202,7 @@ export class Parser {
     //     return updatedMange
     // }
 
-    isLastPage($: CheerioSelector): boolean {
+    isLastPage($: any): boolean {
         const next = $('div.pager-cont').text().includes('下一頁')
         const result = next ? false : true
         return result

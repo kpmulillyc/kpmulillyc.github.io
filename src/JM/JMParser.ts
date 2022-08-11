@@ -1,0 +1,153 @@
+
+import {
+    Chapter,
+    ChapterDetails,
+    LanguageCode,
+    Manga,
+    MangaStatus,
+    MangaTile,
+    Tag,
+    TagSection
+} from 'paperback-extensions-common'
+import { decode } from './JMHelper'
+
+
+const COVER_BASEURL='https://cdn-msp.jmapiproxy1.cc/media/albums/'
+
+export interface UpdatedManga {
+    ids: string[];
+    loadMore: boolean;
+}
+
+export class Parser {
+
+    parseMangaDetails($: any, mangaId: string): Manga {
+        const decodedData = decode($)
+        const parsedData = JSON.parse(decodedData)
+        const desc = parsedData.description
+        const status = MangaStatus.ONGOING
+        const author = parsedData.author
+
+        const titles = parsedData.name
+        const image = `${COVER_BASEURL}${mangaId}_3x4.jpg`
+
+        const tagArray: Tag[] = []
+        let tagId = 1
+        const genres = parsedData.tags
+        genres.forEach((tag: any) => {
+            tagArray.push({ id: tagId.toString(), label: tag })
+            tagId++
+        })
+        const tags: TagSection[] = [createTagSection({ id: '0', label: 'genres', tags: tagArray.map(x => createTag(x)) })]
+
+        const views = parsedData.total_views
+        const langFlag = LanguageCode.CHINEESE_HONGKONG
+        return createManga({
+            id: mangaId,
+            image,
+            desc,
+            status,
+            author,
+            titles: [titles],
+            tags,
+            views,
+            langFlag
+        })
+    }
+
+
+
+    mangaStatus(status: any) {
+        if (status == '0') return MangaStatus.ONGOING
+        if (status == '1') return MangaStatus.COMPLETED
+        return MangaStatus.UNKNOWN
+    }
+
+    parseChapterList($: any, mangaId: string): Chapter[] {
+        const decodedData = decode($)
+        const parsedData = JSON.parse(decodedData)
+        const chapters: Chapter[] = []
+        parsedData.series.forEach((obj: any) => {
+            const id = obj.id
+            const name = obj.name
+            const chapNum = parseFloat(obj.sort)
+            chapters.push(createChapter({
+                id,
+                mangaId,
+                chapNum,
+                langCode: LanguageCode.CHINEESE_HONGKONG,
+                name,
+            }))
+        })
+        return chapters
+    }
+
+
+
+
+    parseSearchResult($: any, start : number): MangaTile[] {
+        const result: MangaTile[] = []
+        const parsedData = JSON.parse($).content
+        for (let i = start; i < start+10; i++) {
+            const id: string = parsedData[i].id      
+            const title = createIconText({ text: parsedData[i].name})
+            const image = `${COVER_BASEURL}${parsedData[i].id}_3x4.jpg`
+            result.push(createMangaTile({
+                id: id,
+                title: title,
+                image: image
+            }))   
+        }
+        return result
+    }
+
+    parseChapterDetails($: string, mangaId: string, chapterId: string): ChapterDetails {
+        const parsedData = JSON.parse($)
+        const pages:any=[]
+        parsedData.urls.forEach((obj:any) => {
+            pages.push(obj)
+        })
+        return createChapterDetails({
+            id: chapterId,
+            mangaId,
+            pages,
+            longStrip: true
+        })
+    }
+
+
+    parseHomeSection($: any): MangaTile[] {
+        const tiles: MangaTile[] = []
+        const parsedJson = JSON.parse($)
+        const decodedData = decode(parsedJson.data)
+        const parsedData = JSON.parse(decodedData)
+        for (let i = 0; i < 5; i++) {
+            const id: string = parsedData.content[i].id
+            tiles.push(createMangaTile({
+                id: id,
+                title: createIconText({text:parsedData.content[i].name}),
+                subtitleText: createIconText({ text: parsedData.content[i].category.title }),
+                image: `${COVER_BASEURL}${parsedData.content[i].id}_3x4.jpg`
+            }))
+        }
+        
+        return tiles
+    }
+
+
+    parseViewMore($: any,start:number): MangaTile[] {
+        const tiles: MangaTile[] = []
+        const parsedData = JSON.parse($).content
+        for (let i = start; i < start+10; i++) {
+            
+            tiles.push(createMangaTile({
+                id: parsedData[i].id,
+                title: createIconText({text: parsedData[i].name}),
+                subtitleText: createIconText({ text: parsedData[i].category.title }),
+                image: `${COVER_BASEURL}${parsedData[i].id}_3x4.jpg`
+            }))
+        }
+        return tiles
+    }
+
+}

@@ -4,14 +4,14 @@ import {
     // SearchRequest,
     Source
 } from 'paperback-extensions-common'
-import { MHR } from '../MHR/MHR'
+import { JM } from '../JM/JM'
 import chai from 'chai'
 import chaiAsPromised from 'chai-as-promised'
 
-describe('ManHuaRen Tests', () => {
+describe('JMCOMIC Tests', () => {
 
     const wrapper: APIWrapper = new APIWrapper()
-    const source: Source = new MHR(cheerio)
+    const source: Source = new JM(cheerio)
     const expect = chai.expect
     chai.use(chaiAsPromised)
 
@@ -20,7 +20,7 @@ describe('ManHuaRen Tests', () => {
    * Try to choose a manga which is updated frequently, so that the historical checking test can
    * return proper results, as it is limited to searching 30 days back due to extremely long processing times otherwise.
    */
-    // const mangaId = '432' // kengan-omega
+    // const mangaId = '180459' // kengan-omega
 
     // it('Retrieve Manga Details', async () => {
     //     const details = await wrapper.getMangaDetails(source, mangaId)
@@ -51,7 +51,7 @@ describe('ManHuaRen Tests', () => {
     //     //      const chapter = chapters[0]
     //     //        console.log(chapter)
 
-    //     const data = await wrapper.getChapterDetails(source, mangaId, '60760')
+    //     const data = await wrapper.getChapterDetails(source, mangaId, '360804')
     //     expect(data, 'No server response').to.exist
     //     expect(data, 'Empty server response').to.not.be.empty
 
@@ -62,7 +62,7 @@ describe('ManHuaRen Tests', () => {
 
     // it('Testing search', async () => {
     //     const testSearch: SearchRequest = {
-    //         title: '',
+    //         title: '繼母的朋友們',
     //         parameters: {
     //             includedTags: ['同人']
     //         }
@@ -80,20 +80,20 @@ describe('ManHuaRen Tests', () => {
     //     expect(result?.subtitleText, 'No subtitle text').to.be.not.null
     // })
 
-    // it('Testing Home-Page aquisition', async () => {
-    //     const homePages = await wrapper.getHomePageSections(source)
-    //     expect(homePages, 'No response from server').to.exist
-    //     expect(homePages[0]?.items, 'No items present').to.exist
-    // })
-
-    it('Testing Notifications', async () => {
-        const updates = await wrapper.filterUpdatedManga(source, new Date('2022-08-04'), ['43555'])
-        console.log(updates)
-        
-        expect(updates, 'No server response').to.exist
-        expect(updates, 'Empty server response').to.not.be.empty
-        expect(updates[0], 'No updates').to.not.be.empty
+    it('Testing Home-Page aquisition', async () => {
+        const homePages = await wrapper.getHomePageSections(source)
+        expect(homePages, 'No response from server').to.exist
+        expect(homePages[0]?.items, 'No items present').to.exist
     })
+
+    // it('Testing Notifications', async () => {
+    //     const updates = await wrapper.filterUpdatedManga(source, new Date('2022-08-04'), ['43555'])
+    //     console.log(updates)
+        
+    //     expect(updates, 'No server response').to.exist
+    //     expect(updates, 'Empty server response').to.not.be.empty
+    //     expect(updates[0], 'No updates').to.not.be.empty
+    // })
 
     // it('Get tags', async () => {
     //     const tags = await wrapper.getTags(source)

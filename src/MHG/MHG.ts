@@ -11,7 +11,7 @@ import {
     RequestManagerInfo,
     SourceInfo,
     ContentRating,
-} from "paperback-extensions-common"
+} from 'paperback-extensions-common'
 
 import { Parser, } from './MHGParser'
 
@@ -24,7 +24,7 @@ export const MHGInfo: SourceInfo = {
     description: 'ManHuaGui',
     author: 'kpwa',
     authorWebsite: 'https://kpmulillyc.github.io/',
-    icon: "favicon.ico",
+    icon: 'favicon.ico',
     websiteBaseURL: 'https://kpmulillyc.github.io/',
     contentRating: ContentRating.EVERYONE,
 }
@@ -84,7 +84,7 @@ export class MHG extends Source {
 
         const request = createRequestObject({
             url: `${MHG_DOMAIN}/comic/${mangaId}/`,
-            method: "GET"
+            method: 'GET'
         })
         const data = await this.requestManager.schedule(request, 1)
         const $ = this.cheerio.load(data.data)
@@ -112,7 +112,7 @@ export class MHG extends Source {
 
     async getSearchResults(query: SearchRequest, metadata: any,): Promise<PagedResults> {
         let _a
-        let page: number = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 1;
+        const page: number = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 1
         let searchUrl = ''
         if (query.title) {
             searchUrl = `${MHG_DOMAIN}/s/${encodeURI(query.title ?? '')}_p${page}.html`
@@ -124,7 +124,7 @@ export class MHG extends Source {
         const data = await this.requestManager.schedule(request, 1)
         const $ = this.cheerio.load(data.data)
         const mangaTiles = this.parser.parseSearchResult($)
-        metadata = !this.parser.isLastPage($) ? { page: page + 1 } : undefined;
+        metadata = !this.parser.isLastPage($) ? { page: page + 1 } : undefined
         return createPagedResults({
             results: mangaTiles,
             metadata
