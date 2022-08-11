@@ -153,8 +153,6 @@ export class Parser {
     parseTags($:string):TagSection[]|null{
         const arrayTags: Tag[] = []
         const parsedData = JSON.parse($).categories
-        console.log(parsedData)
-        
         parsedData.forEach((obj:any) => {
             arrayTags.push({id:obj.slug,label:obj.name})
         })

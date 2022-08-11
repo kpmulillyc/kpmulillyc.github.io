@@ -68,7 +68,7 @@ export class JM extends Source {
     parser = new Parser()
 
     override getMangaShareUrl(mangaId: string): string {
-        return `${BASE_URL}${mangaId}`
+        return `https://18comic.vip/album/${mangaId}`
     }
 
     async getMangaDetails(mangaId: string): Promise<Manga> {
@@ -172,13 +172,13 @@ export class JM extends Source {
             {
                 request: createRequestObject({
                     url: getMangaUrl,
-                    param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr`,
+                    param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=meiman`,
                     headers: { ...headers, ...getToken() },
                     method: 'GET'
                 }),
                 section: createHomeSection({
-                    id: 'aman',
-                    title: 'A漫',
+                    id: 'meiman',
+                    title: '美漫',
                     view_more: true,
                     type: HomeSectionType.singleRowNormal
                 }),
@@ -186,13 +186,13 @@ export class JM extends Source {
             {
                 request: createRequestObject({
                     url: getMangaUrl,
-                    param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=doujin`,
+                    param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=short`,
                     headers: { ...headers, ...getToken() },
                     method: 'GET'
                 }),
                 section: createHomeSection({
-                    id: 'douren',
-                    title: '同人',
+                    id: 'short',
+                    title: '短篇',
                     view_more: true,
                     type: HomeSectionType.singleRowNormal
                 }),
@@ -232,12 +232,12 @@ export class JM extends Source {
                 request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=hanman&page=${page}`
 
                 break
-            case 'aman':
-                request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&page=${page}`
+            case 'meiman':
+                request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=meimanpage=${page}`
 
                 break
-            case 'douren':
-                request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=doujin&page=${page}`
+            case 'short':
+                request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=short&page=${page}`
 
                 break
             default:

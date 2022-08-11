@@ -1,7 +1,7 @@
 import cheerio from 'cheerio'
 import {
     APIWrapper,
-    SearchRequest,
+    // SearchRequest,
     Source
 } from 'paperback-extensions-common'
 import { JM } from '../JM/JM'
@@ -60,23 +60,23 @@ describe('JMCOMIC Tests', () => {
     //     expect(data.pages, 'No pages present').to.be.not.empty
     // })
 
-    it('Testing search', async () => {
-        const testSearch: SearchRequest = {
-            title: '',
-            parameters: {
-                includedTags: ['hanman']
-            }
-        }
+    // it('Testing search', async () => {
+    //     const testSearch: SearchRequest = {
+    //         title: '',
+    //         parameters: {
+    //             includedTags: ['hanman']
+    //         }
+    //     }
 
-        const search = await wrapper.searchRequest(source, testSearch, 1)
-        const result = search.results[0]
-        expect(result, 'No response from server').to.exist
+    //     const search = await wrapper.searchRequest(source, testSearch, 1)
+    //     const result = search.results[0]
+    //     expect(result, 'No response from server').to.exist
 
-        expect(result?.id, 'No ID found for search query').to.be.not.empty
-        expect(result?.image, 'No image found for search').to.be.not.empty
-        expect(result?.title, 'No title').to.be.not.null
-        expect(result?.subtitleText, 'No subtitle text').to.be.not.null
-    })
+    //     expect(result?.id, 'No ID found for search query').to.be.not.empty
+    //     expect(result?.image, 'No image found for search').to.be.not.empty
+    //     expect(result?.title, 'No title').to.be.not.null
+    //     expect(result?.subtitleText, 'No subtitle text').to.be.not.null
+    // })
 
     // it('Testing Home-Page aquisition', async () => {
     //     const homePages = await wrapper.getHomePageSections(source)
@@ -93,10 +93,10 @@ describe('JMCOMIC Tests', () => {
     //     expect(updates[0], 'No updates').to.not.be.empty
     // })
 
-    // it('Get tags', async () => {
-    //     const tags = await wrapper.getTags(source)
-    //     expect(tags, 'No server response').to.exist
-    //     expect(tags, 'Empty server response').to.not.be.empty
-    // })
+    it('Get tags', async () => {
+        const tags = await wrapper.getTags(source)
+        expect(tags, 'No server response').to.exist
+        expect(tags, 'Empty server response').to.not.be.empty
+    })
 
 })
