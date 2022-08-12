@@ -7237,19 +7237,13 @@ const VIEW_MODE = 'null';
 const VIEW_MODE_DEBUG = '1';
 const COMICNAME = 'fav';
 exports.JMInfo = {
-    version: '0.1.0',
+    version: '1.0.0',
     name: '禁漫天堂',
     description: '禁漫天堂',
     author: 'kpwa',
     authorWebsite: 'https://github.com/kpmulillyc',
     icon: 'favicon.ico',
-    websiteBaseURL: exports.BASE_URL,
-    sourceTags: [
-        {
-            text: 'Notifications',
-            type: paperback_extensions_common_1.TagType.GREEN
-        }
-    ],
+    websiteBaseURL: 'https://18comic.vip',
     contentRating: paperback_extensions_common_1.ContentRating.ADULT,
 };
 const headers = {
@@ -7319,12 +7313,13 @@ class JM extends paperback_extensions_common_1.Source {
         });
     }
     getSearchResults(query, metadata) {
-        var _a, _b, _c;
+        var _a, _b, _c, _d;
         return __awaiter(this, void 0, void 0, function* () {
             const url = `${this.baseUrl}search`;
             const page = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 1;
             const start = (_b = metadata === null || metadata === void 0 ? void 0 : metadata.start) !== null && _b !== void 0 ? _b : 0;
             const total = (_c = metadata === null || metadata === void 0 ? void 0 : metadata.total) !== null && _c !== void 0 ? _c : 0;
+            const searchTag = (_d = query === null || query === void 0 ? void 0 : query.includedTags) === null || _d === void 0 ? void 0 : _d.map((x) => x.id)[0];
             const request = createRequestObject({
                 url: url,
                 headers: Object.assign(Object.assign({}, headers), (0, JMHelper_1.getToken)()),
@@ -7332,6 +7327,8 @@ class JM extends paperback_extensions_common_1.Source {
             });
             if (query.title)
                 request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&search_query=${encodeURIComponent(query.title)}&page=${page}`;
+            else
+                request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&search_query=${encodeURIComponent(searchTag)}&page=${page}`;
             const json = yield this.requestManager.schedule(request, 1);
             const data = JSON.parse(json.data).data;
             const decodedData = (0, JMHelper_1.decode)(data);
@@ -7348,17 +7345,17 @@ class JM extends paperback_extensions_common_1.Source {
     }
     getHomePageSections(sectionCallback) {
         return __awaiter(this, void 0, void 0, function* () {
-            const getMangaUrl = `${this.baseUrl}categories/filter`;
+            const getMangaUrl = `${this.baseUrl}promote`;
             const sections = [
                 {
                     request: createRequestObject({
-                        url: getMangaUrl,
+                        url: `${this.baseUrl}categories/filter`,
                         param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mv&c=0&order=`,
                         headers: Object.assign(Object.assign({}, headers), (0, JMHelper_1.getToken)()),
                         method: 'GET'
                     }),
                     section: createHomeSection({
-                        id: 'hot',
+                        id: '100',
                         title: '熱門',
                         view_more: true,
                         type: paperback_extensions_common_1.HomeSectionType.singleRowNormal
@@ -7367,13 +7364,13 @@ class JM extends paperback_extensions_common_1.Source {
                 {
                     request: createRequestObject({
                         url: getMangaUrl,
-                        param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=hanman`,
+                        param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}`,
                         headers: Object.assign(Object.assign({}, headers), (0, JMHelper_1.getToken)()),
                         method: 'GET'
                     }),
                     section: createHomeSection({
-                        id: 'korea',
-                        title: '韓漫',
+                        id: '0',
+                        title: '連載更新→右滑看更多→',
                         view_more: true,
                         type: paperback_extensions_common_1.HomeSectionType.singleRowNormal
                     }),
@@ -7381,13 +7378,13 @@ class JM extends paperback_extensions_common_1.Source {
                 {
                     request: createRequestObject({
                         url: getMangaUrl,
-                        param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=meiman`,
+                        param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}`,
                         headers: Object.assign(Object.assign({}, headers), (0, JMHelper_1.getToken)()),
                         method: 'GET'
                     }),
                     section: createHomeSection({
-                        id: 'meiman',
-                        title: '美漫',
+                        id: '1',
+                        title: '本本推薦(＇∀＇) 右滑還有喔',
                         view_more: true,
                         type: paperback_extensions_common_1.HomeSectionType.singleRowNormal
                     }),
@@ -7395,13 +7392,27 @@ class JM extends paperback_extensions_common_1.Source {
                 {
                     request: createRequestObject({
                         url: getMangaUrl,
-                        param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=short`,
+                        param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}`,
                         headers: Object.assign(Object.assign({}, headers), (0, JMHelper_1.getToken)()),
                         method: 'GET'
                     }),
                     section: createHomeSection({
-                        id: 'short',
-                        title: '短篇',
+                        id: '2',
+                        title: '韓漫更新',
+                        view_more: true,
+                        type: paperback_extensions_common_1.HomeSectionType.singleRowNormal
+                    }),
+                },
+                {
+                    request: createRequestObject({
+                        url: getMangaUrl,
+                        param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}`,
+                        headers: Object.assign(Object.assign({}, headers), (0, JMHelper_1.getToken)()),
+                        method: 'GET'
+                    }),
+                    section: createHomeSection({
+                        id: '3',
+                        title: '其他更新',
                         view_more: true,
                         type: paperback_extensions_common_1.HomeSectionType.singleRowNormal
                     }),
@@ -7411,7 +7422,7 @@ class JM extends paperback_extensions_common_1.Source {
             for (const section of sections) {
                 sectionCallback(section.section);
                 promises.push(this.requestManager.schedule(section.request, 1).then((response) => {
-                    section.section.items = this.parser.parseHomeSection(response.data);
+                    section.section.items = this.parser.parseHomeSection(response.data, parseInt(section.section.id));
                     sectionCallback(section.section);
                 }));
             }
@@ -7424,24 +7435,28 @@ class JM extends paperback_extensions_common_1.Source {
             const page = (_a = metadata === null || metadata === void 0 ? void 0 : metadata.page) !== null && _a !== void 0 ? _a : 1;
             const start = (_b = metadata === null || metadata === void 0 ? void 0 : metadata.start) !== null && _b !== void 0 ? _b : 0;
             const total = (_c = metadata === null || metadata === void 0 ? void 0 : metadata.total) !== null && _c !== void 0 ? _c : 0;
-            const getMangaUrl = `${this.baseUrl}categories/filter`;
+            const getMangaUrl = `${this.baseUrl}promote`;
             const request = createRequestObject({
                 url: getMangaUrl,
                 headers: Object.assign(Object.assign({}, headers), (0, JMHelper_1.getToken)()),
                 method: 'GET'
             });
             switch (homepageSectionId) {
-                case 'hot':
+                case '100':
+                    request.url = `${this.baseUrl}categories/filter`;
                     request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mv&c=0&order=&page=${page}`;
                     break;
-                case 'korea':
-                    request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=hanman&page=${page}`;
+                case '0':
+                    request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&page=${page}`;
                     break;
-                case 'meiman':
-                    request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=meimanpage=${page}`;
+                case '1':
+                    request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&page=${page}`;
                     break;
-                case 'short':
-                    request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=short&page=${page}`;
+                case '2':
+                    request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&page=${page}`;
+                    break;
+                case '3':
+                    request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&page=${page}`;
                     break;
                 default:
                     throw new Error('Requested to getViewMoreItems for a section ID which doesn\'t exist');
@@ -7449,8 +7464,8 @@ class JM extends paperback_extensions_common_1.Source {
             const json = yield this.requestManager.schedule(request, 1);
             const data = JSON.parse(json.data).data;
             const decodedData = (0, JMHelper_1.decode)(data);
-            const resultTotal = JSON.parse(decodedData).total - 1;
-            const results = this.parser.parseViewMore(decodedData, start, resultTotal);
+            const resultTotal = homepageSectionId === '100' ? JSON.parse(decodedData).total - 1 : 29;
+            const results = this.parser.parseViewMore(decodedData, start, resultTotal, parseInt(homepageSectionId));
             metadata = (metadata === null || metadata === void 0 ? void 0 : metadata.start) >= 80 ? { page: page + 1, start: 0, total: total + 10 } : { page: page, start: start + 10, total: total + 10 };
             if (total >= resultTotal)
                 metadata = undefined;
@@ -7482,7 +7497,7 @@ exports.JM = JM;
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.getToken = exports.encodeKey = exports.randomMagic = exports.decode = void 0;
-const CryptoJS = require('crypto-js');
+const CryptoJS = require("crypto-js");
 const MAGIC = '1659951655';
 const API_VERSION = '1.4.4';
 function decode(encrypted) {
@@ -7559,13 +7574,6 @@ class Parser {
             langFlag
         });
     }
-    mangaStatus(status) {
-        if (status == '0')
-            return paperback_extensions_common_1.MangaStatus.ONGOING;
-        if (status == '1')
-            return paperback_extensions_common_1.MangaStatus.COMPLETED;
-        return paperback_extensions_common_1.MangaStatus.UNKNOWN;
-    }
     parseChapterList($, mangaId) {
         const decodedData = (0, JMHelper_1.decode)($);
         const parsedData = JSON.parse(decodedData);
@@ -7614,24 +7622,32 @@ class Parser {
             longStrip: true
         });
     }
-    parseHomeSection($) {
+    parseHomeSection($, id) {
         const tiles = [];
         const parsedJson = JSON.parse($);
         const decodedData = (0, JMHelper_1.decode)(parsedJson.data);
-        const parsedData = JSON.parse(decodedData);
+        let parsedData;
+        if (id === 100)
+            parsedData = JSON.parse(decodedData).content;
+        else
+            parsedData = JSON.parse(decodedData)[id].content;
         for (let i = 0; i < 5; i++) {
             tiles.push(createMangaTile({
-                id: parsedData.content[i].id,
-                title: createIconText({ text: parsedData.content[i].name }),
-                subtitleText: createIconText({ text: parsedData.content[i].category.title }),
-                image: `${COVER_BASEURL}${parsedData.content[i].id}_3x4.jpg`
+                id: parsedData[i].id,
+                title: createIconText({ text: parsedData[i].name }),
+                subtitleText: createIconText({ text: parsedData[i].category.title }),
+                image: `${COVER_BASEURL}${parsedData[i].id}_3x4.jpg`
             }));
         }
         return tiles;
     }
-    parseViewMore($, start, total) {
+    parseViewMore($, start, total, id) {
         const tiles = [];
-        const parsedData = JSON.parse($).content;
+        let parsedData;
+        if (id === 100)
+            parsedData = JSON.parse($).content;
+        else
+            parsedData = JSON.parse($)[id].content;
         for (let i = start; i < start + 10; i++) {
             if (i >= total)
                 break;
@@ -7646,9 +7662,11 @@ class Parser {
     }
     parseTags($) {
         const arrayTags = [];
-        const parsedData = JSON.parse($).categories;
+        const parsedData = JSON.parse($).blocks;
         parsedData.forEach((obj) => {
-            arrayTags.push({ id: obj.slug, label: obj.name });
+            obj.content.forEach((tag) => {
+                arrayTags.push({ id: tag, label: tag });
+            });
         });
         const tagSections = [createTagSection({ id: '0', label: '分類', tags: arrayTags.map(x => createTag(x)) })];
         return tagSections;
