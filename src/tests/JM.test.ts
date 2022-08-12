@@ -20,20 +20,20 @@ describe('JMCOMIC Tests', () => {
    * Try to choose a manga which is updated frequently, so that the historical checking test can
    * return proper results, as it is limited to searching 30 days back due to extremely long processing times otherwise.
    */
-    // const mangaId = '180459' // kengan-omega
+    const mangaId = '180459' // kengan-omega
 
-    // it('Retrieve Manga Details', async () => {
-    //     const details = await wrapper.getMangaDetails(source, mangaId)
-    //     expect(details, 'No results found with test-defined ID [' + mangaId + ']')
-    //         .to.exist
+    it('Retrieve Manga Details', async () => {
+        const details = await wrapper.getMangaDetails(source, mangaId)
+        expect(details, 'No results found with test-defined ID [' + mangaId + ']')
+            .to.exist
 
-    //     // Validate that the fields are filled
-    //     const data = details
-    //     expect(data.image, 'Missing Image').to.be.not.empty
-    //     expect(data.status, 'Missing Status').to.exist
-    //     expect(data.desc, 'Missing Description').to.be.not.empty
-    //     expect(data.titles, 'Missing Titles').to.be.not.empty
-    // })
+        // Validate that the fields are filled
+        const data = details
+        expect(data.image, 'Missing Image').to.be.not.empty
+        expect(data.status, 'Missing Status').to.exist
+        expect(data.desc, 'Missing Description').to.be.not.empty
+        expect(data.titles, 'Missing Titles').to.be.not.empty
+    })
 
     // it('Get Chapters', async () => {
     //     const data = await wrapper.getChapters(source, mangaId)
@@ -78,11 +78,11 @@ describe('JMCOMIC Tests', () => {
     //     expect(result?.subtitleText, 'No subtitle text').to.be.not.null
     // })
 
-    it('Testing Home-Page aquisition', async () => {
-        const homePages = await wrapper.getHomePageSections(source)
-        expect(homePages, 'No response from server').to.exist
-        expect(homePages[0]?.items, 'No items present').to.exist
-    })
+    // it('Testing Home-Page aquisition', async () => {
+    //     const homePages = await wrapper.getHomePageSections(source)
+    //     expect(homePages, 'No response from server').to.exist
+    //     expect(homePages[0]?.items, 'No items present').to.exist
+    // })
 
     // it('Testing Notifications', async () => {
     //     const updates = await wrapper.filterUpdatedManga(source, new Date('2022-08-04'), ['43555'])

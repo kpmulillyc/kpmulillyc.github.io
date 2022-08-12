@@ -26,8 +26,10 @@ export class Parser {
         const parsedData = JSON.parse(decodedData)
         const desc = parsedData.description
         const status = MangaStatus.ONGOING
-        const author = parsedData.author
-
+        let authors  =''
+        for (const author of parsedData.author) {
+            authors += author+', ' 
+        }        
         const titles = parsedData.name
         const image = `${COVER_BASEURL}${mangaId}_3x4.jpg`
 
@@ -35,8 +37,7 @@ export class Parser {
         let tagId = 1
         const genres = parsedData.tags
         genres.forEach((tag: string) => {
-            tagArray.push({ id: tagId.toString(), label: tag })
-            tagId++
+            tagArray.push({ id: (tagId++).toString(), label: tag })
         })
         const tags: TagSection[] = [createTagSection({ id: '0', label: 'genres', tags: tagArray.map(x => createTag(x)) })]
 
@@ -47,7 +48,7 @@ export class Parser {
             image,
             desc,
             status,
-            author,
+            author:authors.slice(0,-2),
             titles: [titles],
             tags,
             views,
