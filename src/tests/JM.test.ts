@@ -64,7 +64,7 @@ describe('JMCOMIC Tests', () => {
     //     const testSearch: SearchRequest = {
     //         title: '',
     //         parameters: {
-    //             includedTags: ['hanman']
+    //             includedTags: ['']
     //         }
     //     }
 
@@ -78,11 +78,11 @@ describe('JMCOMIC Tests', () => {
     //     expect(result?.subtitleText, 'No subtitle text').to.be.not.null
     // })
 
-    // it('Testing Home-Page aquisition', async () => {
-    //     const homePages = await wrapper.getHomePageSections(source)
-    //     expect(homePages, 'No response from server').to.exist
-    //     expect(homePages[0]?.items, 'No items present').to.exist
-    // })
+    it('Testing Home-Page aquisition', async () => {
+        const homePages = await wrapper.getHomePageSections(source)
+        expect(homePages, 'No response from server').to.exist
+        expect(homePages[0]?.items, 'No items present').to.exist
+    })
 
     // it('Testing Notifications', async () => {
     //     const updates = await wrapper.filterUpdatedManga(source, new Date('2022-08-04'), ['43555'])
@@ -93,10 +93,10 @@ describe('JMCOMIC Tests', () => {
     //     expect(updates[0], 'No updates').to.not.be.empty
     // })
 
-    it('Get tags', async () => {
-        const tags = await wrapper.getTags(source)
-        expect(tags, 'No server response').to.exist
-        expect(tags, 'Empty server response').to.not.be.empty
-    })
+    // it('Get tags', async () => {
+    //     const tags = await wrapper.getTags(source)
+    //     expect(tags, 'No server response').to.exist
+    //     expect(tags, 'Empty server response').to.not.be.empty
+    // })
 
 })

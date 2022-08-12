@@ -11,7 +11,6 @@ import {
     SourceInfo,
     ContentRating,
     HomeSectionType,
-    TagType,
     TagSection
 } from 'paperback-extensions-common'
 import {
@@ -29,19 +28,13 @@ const VIEW_MODE_DEBUG = '1'
 const COMICNAME = 'fav'
 
 export const JMInfo: SourceInfo = {
-    version: '0.1.0',
+    version: '1.0.0',
     name: '禁漫天堂',
     description: '禁漫天堂',
     author: 'kpwa',
     authorWebsite: 'https://github.com/kpmulillyc',
     icon: 'favicon.ico',
-    websiteBaseURL: BASE_URL,
-    sourceTags: [
-        {
-            text: 'Notifications',
-            type: TagType.GREEN
-        }
-    ],
+    websiteBaseURL: 'https://18comic.vip',
     contentRating: ContentRating.ADULT,
 }
 
@@ -117,13 +110,16 @@ export class JM extends Source {
         const page: number = metadata?.page ?? 1
         const start: number = metadata?.start ?? 0
         const total: number = metadata?.total ?? 0
+        const searchTag: any = query?.includedTags?.map((x: any) => x.id)[0]
         const request = createRequestObject({
             url: url,
             headers: { ...headers, ...getToken() },
             method: 'GET'
         })
         if (query.title)
-            request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&search_query=${encodeURIComponent(query.title!)}&page=${page}`
+            request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&search_query=${encodeURIComponent(query.title)}&page=${page}`
+        else
+            request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&search_query=${encodeURIComponent(searchTag)}&page=${page}`
         const json = await this.requestManager.schedule(request, 1)
         const data = JSON.parse(json.data).data
         const decodedData = decode(data)
@@ -139,17 +135,17 @@ export class JM extends Source {
     }
 
     override async getHomePageSections(sectionCallback: (section: HomeSection) => void): Promise<void> {
-        const getMangaUrl = `${this.baseUrl}categories/filter`
+        const getMangaUrl = `${this.baseUrl}promote`
         const sections = [
             {
                 request: createRequestObject({
-                    url: getMangaUrl,
+                    url: `${this.baseUrl}categories/filter`,
                     param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mv&c=0&order=`,
                     headers: { ...headers, ...getToken() },
                     method: 'GET'
                 }),
                 section: createHomeSection({
-                    id: 'hot',
+                    id: '100',
                     title: '熱門',
                     view_more: true,
                     type: HomeSectionType.singleRowNormal
@@ -158,13 +154,13 @@ export class JM extends Source {
             {
                 request: createRequestObject({
                     url: getMangaUrl,
-                    param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=hanman`,
+                    param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}`,
                     headers: { ...headers, ...getToken() },
                     method: 'GET'
                 }),
                 section: createHomeSection({
-                    id: 'korea',
-                    title: '韓漫',
+                    id: '0',
+                    title: '連載更新→右滑看更多→',
                     view_more: true,
                     type: HomeSectionType.singleRowNormal
                 }),
@@ -172,13 +168,13 @@ export class JM extends Source {
             {
                 request: createRequestObject({
                     url: getMangaUrl,
-                    param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=meiman`,
+                    param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}`,
                     headers: { ...headers, ...getToken() },
                     method: 'GET'
                 }),
                 section: createHomeSection({
-                    id: 'meiman',
-                    title: '美漫',
+                    id: '1',
+                    title: '本本推薦(＇∀＇) 右滑還有喔',
                     view_more: true,
                     type: HomeSectionType.singleRowNormal
                 }),
@@ -186,13 +182,27 @@ export class JM extends Source {
             {
                 request: createRequestObject({
                     url: getMangaUrl,
-                    param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=short`,
+                    param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}`,
                     headers: { ...headers, ...getToken() },
                     method: 'GET'
                 }),
                 section: createHomeSection({
-                    id: 'short',
-                    title: '短篇',
+                    id: '2',
+                    title: '韓漫更新',
+                    view_more: true,
+                    type: HomeSectionType.singleRowNormal
+                }),
+            },
+            {
+                request: createRequestObject({
+                    url: getMangaUrl,
+                    param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}`,
+                    headers: { ...headers, ...getToken() },
+                    method: 'GET'
+                }),
+                section: createHomeSection({
+                    id: '3',
+                    title: '其他更新',
                     view_more: true,
                     type: HomeSectionType.singleRowNormal
                 }),
@@ -203,8 +213,8 @@ export class JM extends Source {
             sectionCallback(section.section)
 
             promises.push(
-                this.requestManager.schedule(section.request, 1).then((response: { data: string | Buffer }) => {
-                    section.section.items = this.parser.parseHomeSection(response.data)
+                this.requestManager.schedule(section.request, 1).then((response: { data: string }) => {
+                    section.section.items = this.parser.parseHomeSection(response.data,parseInt( section.section.id ))
                     sectionCallback(section.section)
                 }),
             )
@@ -218,27 +228,28 @@ export class JM extends Source {
         const page: number = metadata?.page ?? 1
         const start: number = metadata?.start ?? 0
         const total: number = metadata?.total ?? 0
-        const getMangaUrl = `${this.baseUrl}categories/filter`
+        const getMangaUrl = `${this.baseUrl}promote`
         const request = createRequestObject({
             url: getMangaUrl,
             headers: { ...headers, ...getToken() },
             method: 'GET'
         })
         switch (homepageSectionId) {
-            case 'hot':
+            case '100':
+                request.url = `${this.baseUrl}categories/filter`
                 request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mv&c=0&order=&page=${page}`
                 break
-            case 'korea':
-                request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=hanman&page=${page}`
-
+            case '0':
+                request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&page=${page}`
                 break
-            case 'meiman':
-                request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=meimanpage=${page}`
-
+            case '1':
+                request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&page=${page}`
                 break
-            case 'short':
-                request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&c=short&page=${page}`
-
+            case '2':
+                request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&page=${page}`
+                break
+            case '3':
+                request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&page=${page}`
                 break
             default:
                 throw new Error('Requested to getViewMoreItems for a section ID which doesn\'t exist')
@@ -246,8 +257,8 @@ export class JM extends Source {
         const json = await this.requestManager.schedule(request, 1)
         const data = JSON.parse(json.data).data
         const decodedData = decode(data)
-        const resultTotal = JSON.parse(decodedData).total -1
-        const results = this.parser.parseViewMore(decodedData, start,resultTotal)
+        const resultTotal = homepageSectionId === '100' ? JSON.parse(decodedData).total -1  :   29
+        const results = this.parser.parseViewMore(decodedData, start,resultTotal, parseInt(homepageSectionId))
         metadata = metadata?.start >= 80 ? { page: page + 1, start: 0, total: total + 10 } : { page: page, start: start + 10, total: total + 10 }
         if (total >= resultTotal) metadata = undefined
         return createPagedResults({

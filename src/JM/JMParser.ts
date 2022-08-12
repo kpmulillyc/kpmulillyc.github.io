@@ -21,7 +21,7 @@ export interface UpdatedManga {
 
 export class Parser {
 
-    parseMangaDetails($: any, mangaId: string): Manga {
+    parseMangaDetails($: string, mangaId: string): Manga {
         const decodedData = decode($)
         const parsedData = JSON.parse(decodedData)
         const desc = parsedData.description
@@ -34,7 +34,7 @@ export class Parser {
         const tagArray: Tag[] = []
         let tagId = 1
         const genres = parsedData.tags
-        genres.forEach((tag: any) => {
+        genres.forEach((tag: string) => {
             tagArray.push({ id: tagId.toString(), label: tag })
             tagId++
         })
@@ -57,13 +57,8 @@ export class Parser {
 
 
 
-    mangaStatus(status: any) {
-        if (status == '0') return MangaStatus.ONGOING
-        if (status == '1') return MangaStatus.COMPLETED
-        return MangaStatus.UNKNOWN
-    }
 
-    parseChapterList($: any, mangaId: string): Chapter[] {
+    parseChapterList($: string, mangaId: string): Chapter[] {
         const decodedData = decode($)
         const parsedData = JSON.parse(decodedData)
         const chapters: Chapter[] = []
@@ -85,7 +80,7 @@ export class Parser {
 
 
 
-    parseSearchResult($: any, start: number, total:number): MangaTile[] {
+    parseSearchResult($: string, start: number, total:number): MangaTile[] {
         const result: MangaTile[] = []
         const  parsedData = JSON.parse($).content
         for (let i = start; i < start + 10; i++) {
@@ -105,7 +100,7 @@ export class Parser {
 
     parseChapterDetails($: string, mangaId: string, chapterId: string): ChapterDetails {
         const parsedData = JSON.parse($)
-        const pages: any = []
+        const pages: string[] = []
         parsedData.urls.forEach((obj: any) => {
             pages.push(obj)
         })
@@ -118,26 +113,35 @@ export class Parser {
     }
 
 
-    parseHomeSection($: any): MangaTile[] {
+    parseHomeSection($: string,id:number): MangaTile[] {
         const tiles: MangaTile[] = []
         const parsedJson = JSON.parse($)
         const decodedData = decode(parsedJson.data)
-        const parsedData = JSON.parse(decodedData)
+        let parsedData
+        if (id === 100)
+            parsedData = JSON.parse(decodedData).content
+        else 
+            parsedData = JSON.parse(decodedData)[id].content
+            
         for (let i = 0; i < 5; i++) {
             tiles.push(createMangaTile({
-                id: parsedData.content[i].id,
-                title: createIconText({ text: parsedData.content[i].name }),
-                subtitleText: createIconText({ text: parsedData.content[i].category.title }),
-                image: `${COVER_BASEURL}${parsedData.content[i].id}_3x4.jpg`
+                id: parsedData[i].id,
+                title: createIconText({ text: parsedData[i].name }),
+                subtitleText: createIconText({ text: parsedData[i].category.title }),
+                image: `${COVER_BASEURL}${parsedData[i].id}_3x4.jpg`
             }))
         }
         return tiles
     }
 
 
-    parseViewMore($: any, start: number,total:number): MangaTile[] {
+    parseViewMore($: string, start: number,total:number,id:number): MangaTile[] {
         const tiles: MangaTile[] = []
-        const parsedData = JSON.parse($).content
+        let parsedData
+        if (id === 100)
+            parsedData = JSON.parse($).content
+        else 
+            parsedData = JSON.parse($)[id].content
         for (let i = start; i < start + 10; i++) {
             if (i >= total) break
             tiles.push(createMangaTile({
@@ -152,9 +156,11 @@ export class Parser {
 
     parseTags($:string):TagSection[]|null{
         const arrayTags: Tag[] = []
-        const parsedData = JSON.parse($).categories
+        const parsedData = JSON.parse($).blocks
         parsedData.forEach((obj:any) => {
-            arrayTags.push({id:obj.slug,label:obj.name})
+            obj.content.forEach((tag:string) => {
+                arrayTags.push({id:tag,label:tag})
+            })
         })
         const tagSections: TagSection[] = [createTagSection({ id: '0', label: '分類', tags: arrayTags.map(x => createTag(x)) })]
         return tagSections
