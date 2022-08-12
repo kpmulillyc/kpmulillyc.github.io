@@ -7237,7 +7237,7 @@ const VIEW_MODE = 'null';
 const VIEW_MODE_DEBUG = '1';
 const COMICNAME = 'fav';
 exports.JMInfo = {
-    version: '1.0.0',
+    version: '1.0.1',
     name: '禁漫天堂',
     description: '禁漫天堂',
     author: 'kpwa',
@@ -7549,15 +7549,17 @@ class Parser {
         const parsedData = JSON.parse(decodedData);
         const desc = parsedData.description;
         const status = paperback_extensions_common_1.MangaStatus.ONGOING;
-        const author = parsedData.author;
+        let authors = '';
+        for (const author of parsedData.author) {
+            authors += author + ', ';
+        }
         const titles = parsedData.name;
         const image = `${COVER_BASEURL}${mangaId}_3x4.jpg`;
         const tagArray = [];
         let tagId = 1;
         const genres = parsedData.tags;
         genres.forEach((tag) => {
-            tagArray.push({ id: tagId.toString(), label: tag });
-            tagId++;
+            tagArray.push({ id: (tagId++).toString(), label: tag });
         });
         const tags = [createTagSection({ id: '0', label: 'genres', tags: tagArray.map(x => createTag(x)) })];
         const views = parsedData.total_views;
@@ -7567,7 +7569,7 @@ class Parser {
             image,
             desc,
             status,
-            author,
+            author: authors.slice(0, -2),
             titles: [titles],
             tags,
             views,
