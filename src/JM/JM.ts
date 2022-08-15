@@ -25,7 +25,7 @@ const ACCEPT_ENCODING = 'gzip'
 const KEY = '0b931a6f4b5ccc3f8d870839d07ae7b2'
 const VIEW_MODE = 'null'
 const VIEW_MODE_DEBUG = '1'
-const COMICNAME = 'fav'
+const COMICNAME = ''
 
 export const JMInfo: SourceInfo = {
     version: '1.0.3',
