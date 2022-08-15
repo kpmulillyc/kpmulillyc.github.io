@@ -7237,7 +7237,7 @@ const VIEW_MODE = 'null';
 const VIEW_MODE_DEBUG = '1';
 const COMICNAME = '';
 exports.JMInfo = {
-    version: '1.0.3',
+    version: '1.0.5',
     name: '禁漫天堂',
     description: '禁漫天堂',
     author: 'kpwa',
