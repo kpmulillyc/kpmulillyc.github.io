@@ -58,6 +58,19 @@ export class JM extends Source {
             }
         }
     })
+    imageReqManager = createRequestManager({
+        requestsPerSecond: 4,
+        requestTimeout: 60000,
+        interceptor: {
+            interceptRequest: async (request: Request): Promise<Request> => {
+                return request
+            },
+
+            interceptResponse: async (response: Response): Promise<Response> => {
+                return response
+            }
+        }
+    })
     baseUrl = BASE_URL
     parser = new Parser()
     override getMangaShareUrl(mangaId: string): string {
@@ -98,9 +111,7 @@ export class JM extends Source {
             param: `?chapterId=${chapterId}`,
             method: 'GET'
         })
-        this.requestManager.requestTimeout=60000
-        const data = await this.requestManager.schedule(request, 1)
-        this.requestManager.requestTimeout=10000
+        const data = await this.imageReqManager.schedule(request, 1)
         return this.parser.parseChapterDetails(data.data, mangaId, chapterId)
     }
 

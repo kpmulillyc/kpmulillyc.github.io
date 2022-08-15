@@ -22,18 +22,18 @@ describe('JMCOMIC Tests', () => {
    */
     const mangaId = '180459' // kengan-omega
 
-    it('Retrieve Manga Details', async () => {
-        const details = await wrapper.getMangaDetails(source, mangaId)
-        expect(details, 'No results found with test-defined ID [' + mangaId + ']')
-            .to.exist
+    // it('Retrieve Manga Details', async () => {
+    //     const details = await wrapper.getMangaDetails(source, mangaId)
+    //     expect(details, 'No results found with test-defined ID [' + mangaId + ']')
+    //         .to.exist
 
-        // Validate that the fields are filled
-        const data = details
-        expect(data.image, 'Missing Image').to.be.not.empty
-        expect(data.status, 'Missing Status').to.exist
-        expect(data.desc, 'Missing Description').to.be.not.empty
-        expect(data.titles, 'Missing Titles').to.be.not.empty
-    })
+    //     // Validate that the fields are filled
+    //     const data = details
+    //     expect(data.image, 'Missing Image').to.be.not.empty
+    //     expect(data.status, 'Missing Status').to.exist
+    //     expect(data.desc, 'Missing Description').to.be.not.empty
+    //     expect(data.titles, 'Missing Titles').to.be.not.empty
+    // })
 
     // it('Get Chapters', async () => {
     //     const data = await wrapper.getChapters(source, mangaId)
@@ -46,19 +46,19 @@ describe('JMCOMIC Tests', () => {
     //     expect(entry?.chapNum, 'No chapter number present').to.not.be.null
     // })
 
-    // it('Get Chapter Details', async () => {
-    //     // const chapters = await wrapper.getChapters(source, mangaId)
-    //     //      const chapter = chapters[0]
-    //     //        console.log(chapter)
+    it('Get Chapter Details', async () => {
+        const chapters = await wrapper.getChapters(source, mangaId)
+             const chapter = chapters[0]
+               console.log(chapter)
 
-    //     const data = await wrapper.getChapterDetails(source, mangaId, '360804')
-    //     expect(data, 'No server response').to.exist
-    //     expect(data, 'Empty server response').to.not.be.empty
+        const data = await wrapper.getChapterDetails(source, mangaId, '360804')
+        expect(data, 'No server response').to.exist
+        expect(data, 'Empty server response').to.not.be.empty
 
-    //     expect(data.id, 'Missing ID').to.be.not.empty
-    //     expect(data.mangaId, 'Missing MangaID').to.be.not.empty
-    //     expect(data.pages, 'No pages present').to.be.not.empty
-    // })
+        expect(data.id, 'Missing ID').to.be.not.empty
+        expect(data.mangaId, 'Missing MangaID').to.be.not.empty
+        expect(data.pages, 'No pages present').to.be.not.empty
+    })
 
     // it('Testing search', async () => {
     //     const testSearch: SearchRequest = {
