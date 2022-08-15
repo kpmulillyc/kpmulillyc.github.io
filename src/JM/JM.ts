@@ -29,7 +29,7 @@ const VIEW_MODE_DEBUG = '1'
 const COMICNAME = ''
 
 export const JMInfo: SourceInfo = {
-    version: '1.0.7',
+    version: '1.0.8',
     name: '禁漫天堂',
     description: '禁漫天堂',
     author: 'kpwa',
@@ -47,7 +47,7 @@ const headers = {
 export class JM extends Source {
     requestManager = createRequestManager({
         requestsPerSecond: 4,
-        requestTimeout: 10000,
+        requestTimeout: 20000,
         interceptor: {
             interceptRequest: async (request: Request): Promise<Request> => {
                 return request
