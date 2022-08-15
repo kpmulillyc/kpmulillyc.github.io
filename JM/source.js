@@ -7229,7 +7229,7 @@ exports.JM = exports.JMInfo = exports.BASE_URL = void 0;
 const paperback_extensions_common_1 = require("paperback-extensions-common");
 const JMHelper_1 = require("./JMHelper");
 const JMParser_1 = require("./JMParser");
-exports.BASE_URL = 'https://www.asjmapihost.cc/';
+exports.BASE_URL = 'https://www.jmapibranch3.cc/';
 const USERAGENT = 'okhttp/3.12.1';
 const ACCEPT_ENCODING = 'gzip';
 const KEY = '0b931a6f4b5ccc3f8d870839d07ae7b2';
@@ -7237,7 +7237,7 @@ const VIEW_MODE = 'null';
 const VIEW_MODE_DEBUG = '1';
 const COMICNAME = 'fav';
 exports.JMInfo = {
-    version: '1.0.2',
+    version: '1.0.3',
     name: '禁漫天堂',
     description: '禁漫天堂',
     author: 'kpwa',
