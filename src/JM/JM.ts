@@ -29,7 +29,7 @@ const VIEW_MODE_DEBUG = '1'
 const COMICNAME = ''
 
 export const JMInfo: SourceInfo = {
-    version: '1.0.8',
+    version: '1.0.9',
     name: '禁漫天堂',
     description: '禁漫天堂',
     author: 'kpwa',
