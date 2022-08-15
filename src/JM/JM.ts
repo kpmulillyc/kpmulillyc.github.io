@@ -46,7 +46,7 @@ const headers = {
 export class JM extends Source {
     requestManager = createRequestManager({
         requestsPerSecond: 4,
-        requestTimeout: 60000,
+        requestTimeout: 1000,
         interceptor: {
             interceptRequest: async (request: Request): Promise<Request> => {
                 return request
@@ -96,9 +96,11 @@ export class JM extends Source {
         const request = createRequestObject({
             url: detailsUrl,
             param: `?chapterId=${chapterId}`,
-            method: 'GET',
+            method: 'GET'
         })
+        this.requestManager.requestTimeout=60000
         const data = await this.requestManager.schedule(request, 1)
+        this.requestManager.requestTimeout=1000
         return this.parser.parseChapterDetails(data.data, mangaId, chapterId)
     }
 
