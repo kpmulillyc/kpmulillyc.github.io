@@ -19,7 +19,7 @@ import {
 } from './JMHelper'
 import { Parser } from './JMParser'
 
-export const BASE_URL = 'https://www.asjmapihost.cc/'
+export const BASE_URL = 'https://www.jmapibranch3.cc/'
 const USERAGENT = 'okhttp/3.12.1'
 const ACCEPT_ENCODING = 'gzip'
 const KEY = '0b931a6f4b5ccc3f8d870839d07ae7b2'
