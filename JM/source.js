@@ -7235,7 +7235,7 @@ const ACCEPT_ENCODING = 'gzip';
 const KEY = '0b931a6f4b5ccc3f8d870839d07ae7b2';
 const VIEW_MODE = 'null';
 const VIEW_MODE_DEBUG = '1';
-const COMICNAME = 'fav';
+const COMICNAME = '';
 exports.JMInfo = {
     version: '1.0.3',
     name: '禁漫天堂',
@@ -7501,7 +7501,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.getToken = exports.encodeKey = exports.randomMagic = exports.decode = void 0;
 const CryptoJS = require("crypto-js");
 const MAGIC = '1659951655';
-const API_VERSION = '1.4.4';
+const API_VERSION = '1.4.5';
 function decode(encrypted) {
     let data;
     try {
