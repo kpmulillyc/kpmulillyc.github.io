@@ -19,7 +19,7 @@ import {
 } from './JMHelper'
 import { Parser } from './JMParser'
 
-export const BASE_URL = 'https://www.jmapibranch3.cc/'
+export const BASE_URL = 'https://www.asjmapihost.cc/'
 const USERAGENT = 'okhttp/3.12.1'
 const ACCEPT_ENCODING = 'gzip'
 const KEY = '0b931a6f4b5ccc3f8d870839d07ae7b2'
@@ -28,7 +28,7 @@ const VIEW_MODE_DEBUG = '1'
 const COMICNAME = 'fav'
 
 export const JMInfo: SourceInfo = {
-    version: '1.0.1',
+    version: '1.0.2',
     name: '禁漫天堂',
     description: '禁漫天堂',
     author: 'kpwa',
