@@ -7237,7 +7237,7 @@ const VIEW_MODE = 'null';
 const VIEW_MODE_DEBUG = '1';
 const COMICNAME = '';
 exports.JMInfo = {
-    version: '1.0.9',
+    version: '1.1.0',
     name: '禁漫天堂',
     description: '禁漫天堂',
     author: 'kpwa',
@@ -7561,7 +7561,7 @@ class Parser {
         const decodedData = (0, JMHelper_1.decode)($);
         const parsedData = JSON.parse(decodedData);
         const desc = parsedData.description;
-        const status = paperback_extensions_common_1.MangaStatus.ONGOING;
+        let status = paperback_extensions_common_1.MangaStatus.COMPLETED;
         let authors = '';
         for (const author of parsedData.author) {
             authors += author + ', ';
@@ -7572,6 +7572,8 @@ class Parser {
         let tagId = 1;
         const genres = parsedData.tags;
         genres.forEach((tag) => {
+            if (tag === '連載中')
+                status = paperback_extensions_common_1.MangaStatus.ONGOING;
             tagArray.push({ id: (tagId++).toString(), label: tag });
         });
         const tags = [createTagSection({ id: '0', label: 'genres', tags: tagArray.map(x => createTag(x)) })];
