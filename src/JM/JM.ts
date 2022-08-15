@@ -15,11 +15,12 @@ import {
 } from 'paperback-extensions-common'
 import {
     decode,
-    getToken
+    getToken,
+    RETRYCOUNT
 } from './JMHelper'
 import { Parser } from './JMParser'
 
-export const BASE_URL = 'https://www.asjmapihost.cc/'
+export const BASE_URL = 'https://www.jmapibranch3.cc/'
 const USERAGENT = 'okhttp/3.12.1'
 const ACCEPT_ENCODING = 'gzip'
 const KEY = '0b931a6f4b5ccc3f8d870839d07ae7b2'
@@ -28,7 +29,7 @@ const VIEW_MODE_DEBUG = '1'
 const COMICNAME = ''
 
 export const JMInfo: SourceInfo = {
-    version: '1.0.6',
+    version: '1.0.7',
     name: '禁漫天堂',
     description: '禁漫天堂',
     author: 'kpwa',
@@ -46,7 +47,7 @@ const headers = {
 export class JM extends Source {
     requestManager = createRequestManager({
         requestsPerSecond: 4,
-        requestTimeout: 1000,
+        requestTimeout: 10000,
         interceptor: {
             interceptRequest: async (request: Request): Promise<Request> => {
                 return request
@@ -59,7 +60,6 @@ export class JM extends Source {
     })
     baseUrl = BASE_URL
     parser = new Parser()
-
     override getMangaShareUrl(mangaId: string): string {
         return `https://18comic.vip/album/${mangaId}`
     }
@@ -72,7 +72,7 @@ export class JM extends Source {
             headers: { ...headers, ...getToken() },
             method: 'GET'
         })
-        const json = await this.requestManager.schedule(request, 1)
+        const json = await this.requestManager.schedule(request, RETRYCOUNT)
         const data = JSON.parse(json.data).data
         return this.parser.parseMangaDetails(data, mangaId)
     }
@@ -85,7 +85,7 @@ export class JM extends Source {
             headers: { ...headers, ...getToken() },
             method: 'GET'
         })
-        const json = await this.requestManager.schedule(request, 1)
+        const json = await this.requestManager.schedule(request, RETRYCOUNT)
         const data = JSON.parse(json.data).data
         const chapters = this.parser.parseChapterList(data, mangaId)
         return chapters
@@ -100,7 +100,7 @@ export class JM extends Source {
         })
         this.requestManager.requestTimeout=60000
         const data = await this.requestManager.schedule(request, 1)
-        this.requestManager.requestTimeout=1000
+        this.requestManager.requestTimeout=10000
         return this.parser.parseChapterDetails(data.data, mangaId, chapterId)
     }
 
@@ -122,7 +122,7 @@ export class JM extends Source {
             request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&search_query=${encodeURIComponent(query.title)}&page=${page}`
         else
             request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&search_query=${encodeURIComponent(searchTag)}&page=${page}`
-        const json = await this.requestManager.schedule(request, 1)
+        const json = await this.requestManager.schedule(request, RETRYCOUNT)
         const data = JSON.parse(json.data).data
         const decodedData = decode(data)
         const resultTotal = JSON.parse(decodedData).total - 1
@@ -215,7 +215,7 @@ export class JM extends Source {
             sectionCallback(section.section)
 
             promises.push(
-                this.requestManager.schedule(section.request, 1).then((response: { data: string }) => {
+                this.requestManager.schedule(section.request, RETRYCOUNT).then((response: { data: string }) => {
                     section.section.items = this.parser.parseHomeSection(response.data,parseInt( section.section.id ))
                     sectionCallback(section.section)
                 }),
@@ -256,7 +256,7 @@ export class JM extends Source {
             default:
                 throw new Error('Requested to getViewMoreItems for a section ID which doesn\'t exist')
         }
-        const json = await this.requestManager.schedule(request, 1)
+        const json = await this.requestManager.schedule(request, RETRYCOUNT)
         const data = JSON.parse(json.data).data
         const decodedData = decode(data)
         const resultTotal = homepageSectionId === '100' ? JSON.parse(decodedData).total -1  :   29
@@ -280,7 +280,7 @@ export class JM extends Source {
             method: 'GET'
         })
 
-        const json = await this.requestManager.schedule(request, 1)
+        const json = await this.requestManager.schedule(request,RETRYCOUNT)
         const data = JSON.parse(json.data).data
         const decodedData = decode(data)
         return this.parser.parseTags(decodedData) || []
