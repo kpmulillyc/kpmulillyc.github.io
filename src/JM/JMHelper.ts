@@ -1,7 +1,7 @@
 import CryptoJS = require('crypto-js')
 
 
-const MAGIC = '1659951655'
+const MAGIC = '1660540153'
 const API_VERSION = '1.4.5'
 
 export function decode(encrypted: string): string {
