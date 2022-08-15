@@ -7255,7 +7255,7 @@ class JM extends paperback_extensions_common_1.Source {
         super(...arguments);
         this.requestManager = createRequestManager({
             requestsPerSecond: 4,
-            requestTimeout: 60000,
+            requestTimeout: 1000,
             interceptor: {
                 interceptRequest: (request) => __awaiter(this, void 0, void 0, function* () {
                     return request;
@@ -7306,9 +7306,11 @@ class JM extends paperback_extensions_common_1.Source {
             const request = createRequestObject({
                 url: detailsUrl,
                 param: `?chapterId=${chapterId}`,
-                method: 'GET',
+                method: 'GET'
             });
+            this.requestManager.requestTimeout = 60000;
             const data = yield this.requestManager.schedule(request, 1);
+            this.requestManager.requestTimeout = 1000;
             return this.parser.parseChapterDetails(data.data, mangaId, chapterId);
         });
     }
