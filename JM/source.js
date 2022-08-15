@@ -7237,7 +7237,7 @@ const VIEW_MODE = 'null';
 const VIEW_MODE_DEBUG = '1';
 const COMICNAME = '';
 exports.JMInfo = {
-    version: '1.0.7',
+    version: '1.0.8',
     name: '禁漫天堂',
     description: '禁漫天堂',
     author: 'kpwa',
@@ -7255,7 +7255,7 @@ class JM extends paperback_extensions_common_1.Source {
         super(...arguments);
         this.requestManager = createRequestManager({
             requestsPerSecond: 4,
-            requestTimeout: 10000,
+            requestTimeout: 20000,
             interceptor: {
                 interceptRequest: (request) => __awaiter(this, void 0, void 0, function* () {
                     return request;
