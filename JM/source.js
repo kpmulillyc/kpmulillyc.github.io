@@ -7229,7 +7229,7 @@ exports.JM = exports.JMInfo = exports.BASE_URL = void 0;
 const paperback_extensions_common_1 = require("paperback-extensions-common");
 const JMHelper_1 = require("./JMHelper");
 const JMParser_1 = require("./JMParser");
-exports.BASE_URL = 'https://www.asjmapihost.cc/';
+exports.BASE_URL = 'https://www.jmapibranch3.cc/';
 const USERAGENT = 'okhttp/3.12.1';
 const ACCEPT_ENCODING = 'gzip';
 const KEY = '0b931a6f4b5ccc3f8d870839d07ae7b2';
@@ -7237,7 +7237,7 @@ const VIEW_MODE = 'null';
 const VIEW_MODE_DEBUG = '1';
 const COMICNAME = '';
 exports.JMInfo = {
-    version: '1.0.6',
+    version: '1.0.7',
     name: '禁漫天堂',
     description: '禁漫天堂',
     author: 'kpwa',
@@ -7255,7 +7255,7 @@ class JM extends paperback_extensions_common_1.Source {
         super(...arguments);
         this.requestManager = createRequestManager({
             requestsPerSecond: 4,
-            requestTimeout: 1000,
+            requestTimeout: 10000,
             interceptor: {
                 interceptRequest: (request) => __awaiter(this, void 0, void 0, function* () {
                     return request;
@@ -7280,7 +7280,7 @@ class JM extends paperback_extensions_common_1.Source {
                 headers: Object.assign(Object.assign({}, headers), (0, JMHelper_1.getToken)()),
                 method: 'GET'
             });
-            const json = yield this.requestManager.schedule(request, 1);
+            const json = yield this.requestManager.schedule(request, JMHelper_1.RETRYCOUNT);
             const data = JSON.parse(json.data).data;
             return this.parser.parseMangaDetails(data, mangaId);
         });
@@ -7294,7 +7294,7 @@ class JM extends paperback_extensions_common_1.Source {
                 headers: Object.assign(Object.assign({}, headers), (0, JMHelper_1.getToken)()),
                 method: 'GET'
             });
-            const json = yield this.requestManager.schedule(request, 1);
+            const json = yield this.requestManager.schedule(request, JMHelper_1.RETRYCOUNT);
             const data = JSON.parse(json.data).data;
             const chapters = this.parser.parseChapterList(data, mangaId);
             return chapters;
@@ -7310,7 +7310,7 @@ class JM extends paperback_extensions_common_1.Source {
             });
             this.requestManager.requestTimeout = 60000;
             const data = yield this.requestManager.schedule(request, 1);
-            this.requestManager.requestTimeout = 1000;
+            this.requestManager.requestTimeout = 10000;
             return this.parser.parseChapterDetails(data.data, mangaId, chapterId);
         });
     }
@@ -7331,7 +7331,7 @@ class JM extends paperback_extensions_common_1.Source {
                 request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&search_query=${encodeURIComponent(query.title)}&page=${page}`;
             else
                 request.param = `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&o=mr&search_query=${encodeURIComponent(searchTag)}&page=${page}`;
-            const json = yield this.requestManager.schedule(request, 1);
+            const json = yield this.requestManager.schedule(request, JMHelper_1.RETRYCOUNT);
             const data = JSON.parse(json.data).data;
             const decodedData = (0, JMHelper_1.decode)(data);
             const resultTotal = JSON.parse(decodedData).total - 1;
@@ -7423,7 +7423,7 @@ class JM extends paperback_extensions_common_1.Source {
             const promises = [];
             for (const section of sections) {
                 sectionCallback(section.section);
-                promises.push(this.requestManager.schedule(section.request, 1).then((response) => {
+                promises.push(this.requestManager.schedule(section.request, JMHelper_1.RETRYCOUNT).then((response) => {
                     section.section.items = this.parser.parseHomeSection(response.data, parseInt(section.section.id));
                     sectionCallback(section.section);
                 }));
@@ -7463,7 +7463,7 @@ class JM extends paperback_extensions_common_1.Source {
                 default:
                     throw new Error('Requested to getViewMoreItems for a section ID which doesn\'t exist');
             }
-            const json = yield this.requestManager.schedule(request, 1);
+            const json = yield this.requestManager.schedule(request, JMHelper_1.RETRYCOUNT);
             const data = JSON.parse(json.data).data;
             const decodedData = (0, JMHelper_1.decode)(data);
             const resultTotal = homepageSectionId === '100' ? JSON.parse(decodedData).total - 1 : 29;
@@ -7486,7 +7486,7 @@ class JM extends paperback_extensions_common_1.Source {
                 headers: Object.assign(Object.assign({}, headers), (0, JMHelper_1.getToken)()),
                 method: 'GET'
             });
-            const json = yield this.requestManager.schedule(request, 1);
+            const json = yield this.requestManager.schedule(request, JMHelper_1.RETRYCOUNT);
             const data = JSON.parse(json.data).data;
             const decodedData = (0, JMHelper_1.decode)(data);
             return this.parser.parseTags(decodedData) || [];
@@ -7498,8 +7498,9 @@ exports.JM = JM;
 },{"./JMHelper":85,"./JMParser":86,"paperback-extensions-common":41}],85:[function(require,module,exports){
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getToken = exports.encodeKey = exports.randomMagic = exports.decode = void 0;
+exports.getToken = exports.encodeKey = exports.randomMagic = exports.decode = exports.RETRYCOUNT = void 0;
 const CryptoJS = require("crypto-js");
+exports.RETRYCOUNT = 5;
 const MAGIC = '1660540153';
 const API_VERSION = '1.4.5';
 function decode(encrypted) {
