@@ -25,7 +25,7 @@ export class Parser {
         const decodedData = decode($)
         const parsedData = JSON.parse(decodedData)
         const desc = parsedData.description
-        const status = MangaStatus.ONGOING
+        let status= MangaStatus.COMPLETED
         let authors  =''
         for (const author of parsedData.author) {
             authors += author+', ' 
@@ -37,6 +37,8 @@ export class Parser {
         let tagId = 1
         const genres = parsedData.tags
         genres.forEach((tag: string) => {
+            if (tag==='連載中')  
+                status= MangaStatus.ONGOING
             tagArray.push({ id: (tagId++).toString(), label: tag })
         })
         const tags: TagSection[] = [createTagSection({ id: '0', label: 'genres', tags: tagArray.map(x => createTag(x)) })]
