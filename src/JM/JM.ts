@@ -29,7 +29,7 @@ const VIEW_MODE_DEBUG = '1'
 const COMICNAME = ''
 
 export const JMInfo: SourceInfo = {
-    version: '1.2.0',
+    version: '1.2.1',
     name: '禁漫天堂',
     description: '禁漫天堂',
     author: 'kpwa',
@@ -46,19 +46,6 @@ const headers = {
 
 export class JM extends Source {
     requestManager = createRequestManager({
-        requestsPerSecond: 4,
-        requestTimeout: 20000,
-        interceptor: {
-            interceptRequest: async (request: Request): Promise<Request> => {
-                return request
-            },
-
-            interceptResponse: async (response: Response): Promise<Response> => {
-                return response
-            }
-        }
-    })
-    imageReqManager = createRequestManager({
         requestsPerSecond: 4,
         requestTimeout: 60000,
         interceptor: {
@@ -111,7 +98,7 @@ export class JM extends Source {
             param: `?chapterId=${chapterId}`,
             method: 'GET'
         })
-        const data = await this.imageReqManager.schedule(request, 1)
+        const data = await this.requestManager.schedule(request, 1)
         return this.parser.parseChapterDetails(data.data, mangaId, chapterId)
     }
 
