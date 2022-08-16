@@ -7237,7 +7237,7 @@ const VIEW_MODE = 'null';
 const VIEW_MODE_DEBUG = '1';
 const COMICNAME = '';
 exports.JMInfo = {
-    version: '1.2.0',
+    version: '1.2.1',
     name: '禁漫天堂',
     description: '禁漫天堂',
     author: 'kpwa',
@@ -7254,18 +7254,6 @@ class JM extends paperback_extensions_common_1.Source {
     constructor() {
         super(...arguments);
         this.requestManager = createRequestManager({
-            requestsPerSecond: 4,
-            requestTimeout: 20000,
-            interceptor: {
-                interceptRequest: (request) => __awaiter(this, void 0, void 0, function* () {
-                    return request;
-                }),
-                interceptResponse: (response) => __awaiter(this, void 0, void 0, function* () {
-                    return response;
-                })
-            }
-        });
-        this.imageReqManager = createRequestManager({
             requestsPerSecond: 4,
             requestTimeout: 60000,
             interceptor: {
@@ -7320,7 +7308,7 @@ class JM extends paperback_extensions_common_1.Source {
                 param: `?chapterId=${chapterId}`,
                 method: 'GET'
             });
-            const data = yield this.imageReqManager.schedule(request, 1);
+            const data = yield this.requestManager.schedule(request, 1);
             return this.parser.parseChapterDetails(data.data, mangaId, chapterId);
         });
     }
