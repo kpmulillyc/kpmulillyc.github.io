@@ -91,7 +91,7 @@ export class JM extends Source {
     }
 
     async getChapters(mangaId: string): Promise<Chapter[]> {
-        const getMangaUrl = `${this.baseUrl}album`
+        const getMangaUrl = `${this.baseUrl}chapter`
         const request = createRequestObject({
             url: getMangaUrl,
             param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&comicName=${COMICNAME}&id=${mangaId}`,

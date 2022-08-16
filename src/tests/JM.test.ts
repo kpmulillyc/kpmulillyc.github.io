@@ -1,7 +1,7 @@
 import cheerio from 'cheerio'
 import {
     APIWrapper,
-    // SearchRequest,
+    SearchRequest,
     Source
 } from 'paperback-extensions-common'
 import { JM } from '../JM/JM'
@@ -20,7 +20,7 @@ describe('JMCOMIC Tests', () => {
    * Try to choose a manga which is updated frequently, so that the historical checking test can
    * return proper results, as it is limited to searching 30 days back due to extremely long processing times otherwise.
    */
-    const mangaId = '180459' // kengan-omega
+    // const mangaId = '368422' // kengan-omega
 
     // it('Retrieve Manga Details', async () => {
     //     const details = await wrapper.getMangaDetails(source, mangaId)
@@ -46,37 +46,37 @@ describe('JMCOMIC Tests', () => {
     //     expect(entry?.chapNum, 'No chapter number present').to.not.be.null
     // })
 
-    it('Get Chapter Details', async () => {
-        const chapters = await wrapper.getChapters(source, mangaId)
-             const chapter = chapters[0]
-               console.log(chapter)
+    // it('Get Chapter Details', async () => {
+    //     const chapters = await wrapper.getChapters(source, mangaId)
+    //          const chapter = chapters[0]
+    //            console.log(chapter)
 
-        const data = await wrapper.getChapterDetails(source, mangaId, '360804')
-        expect(data, 'No server response').to.exist
-        expect(data, 'Empty server response').to.not.be.empty
+    //     const data = await wrapper.getChapterDetails(source, mangaId, '360804')
+    //     expect(data, 'No server response').to.exist
+    //     expect(data, 'Empty server response').to.not.be.empty
 
-        expect(data.id, 'Missing ID').to.be.not.empty
-        expect(data.mangaId, 'Missing MangaID').to.be.not.empty
-        expect(data.pages, 'No pages present').to.be.not.empty
-    })
-
-    // it('Testing search', async () => {
-    //     const testSearch: SearchRequest = {
-    //         title: '',
-    //         parameters: {
-    //             includedTags: ['']
-    //         }
-    //     }
-
-    //     const search = await wrapper.searchRequest(source, testSearch, 1)
-    //     const result = search.results[0]
-    //     expect(result, 'No response from server').to.exist
-
-    //     expect(result?.id, 'No ID found for search query').to.be.not.empty
-    //     expect(result?.image, 'No image found for search').to.be.not.empty
-    //     expect(result?.title, 'No title').to.be.not.null
-    //     expect(result?.subtitleText, 'No subtitle text').to.be.not.null
+    //     expect(data.id, 'Missing ID').to.be.not.empty
+    //     expect(data.mangaId, 'Missing MangaID').to.be.not.empty
+    //     expect(data.pages, 'No pages present').to.be.not.empty
     // })
+
+    it('Testing search', async () => {
+        const testSearch: SearchRequest = {
+            title: '3d',
+            parameters: {
+                includedTags: ['']
+            }
+        }
+
+        const search = await wrapper.searchRequest(source, testSearch, 1)
+        const result = search.results[0]
+        expect(result, 'No response from server').to.exist
+
+        expect(result?.id, 'No ID found for search query').to.be.not.empty
+        expect(result?.image, 'No image found for search').to.be.not.empty
+        expect(result?.title, 'No title').to.be.not.null
+        expect(result?.subtitleText, 'No subtitle text').to.be.not.null
+    })
 
     // it('Testing Home-Page aquisition', async () => {
     //     const homePages = await wrapper.getHomePageSections(source)
