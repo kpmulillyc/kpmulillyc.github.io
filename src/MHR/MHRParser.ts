@@ -148,7 +148,7 @@ export class Parser {
         for (const obj of parsedData.response.result) {
             const id: string = obj.mangaId.toString()
             const title = createIconText({ text: converter(obj.mangaName) })
-            const image = obj.mangaPicimageUrl || 'http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg'
+            const image = obj.mangaCoverimageUrl || 'http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg'
             result.push(createMangaTile({
                 id: id,
                 title: title,

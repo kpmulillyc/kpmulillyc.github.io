@@ -9,7 +9,7 @@
     "bundle": "paperback bundle",
     "serve": "paperback serve",
     "fix": "npx eslint src/JM/*.ts --fix",
-    "test": "node_modules/.bin/mocha --timeout 300000 -r ts-node/register src/**/JM.test.ts"
+    "test": "node_modules/.bin/mocha --timeout 300000 -r ts-node/register src/**/MHR.test.ts"
   },
   "repository": {
     "type": "git",
