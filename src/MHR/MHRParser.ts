@@ -242,7 +242,7 @@ export class Parser {
         parsedData.mangas.forEach((obj: any) => {
             const id: string = obj.mangaId.toString()
             const title = createIconText({ text: converter(obj.mangaName) })
-            const image = obj.mangaPicimageUrl || 'http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg'
+            const image = obj.mangaCoverimageUrl || 'http://mhfm5.hk.cdndm5.com/tag/category/nopic.jpg'
             const subtitle = converter(obj.mangaNewestContent)
             tiles.push(createMangaTile({
                 id: id,
