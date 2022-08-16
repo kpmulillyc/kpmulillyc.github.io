@@ -7237,7 +7237,7 @@ const VIEW_MODE = 'null';
 const VIEW_MODE_DEBUG = '1';
 const COMICNAME = '';
 exports.JMInfo = {
-    version: '1.1.0',
+    version: '1.2.0',
     name: '禁漫天堂',
     description: '禁漫天堂',
     author: 'kpwa',
@@ -7299,7 +7299,7 @@ class JM extends paperback_extensions_common_1.Source {
     }
     getChapters(mangaId) {
         return __awaiter(this, void 0, void 0, function* () {
-            const getMangaUrl = `${this.baseUrl}album`;
+            const getMangaUrl = `${this.baseUrl}chapter`;
             const request = createRequestObject({
                 url: getMangaUrl,
                 param: `?key=${KEY}&view_mode_debug=${VIEW_MODE_DEBUG}&view_mode=${VIEW_MODE}&comicName=${COMICNAME}&id=${mangaId}`,
@@ -7595,6 +7595,16 @@ class Parser {
         const decodedData = (0, JMHelper_1.decode)($);
         const parsedData = JSON.parse(decodedData);
         const chapters = [];
+        if (parsedData.series.length === 0) {
+            chapters.push(createChapter({
+                id: mangaId,
+                mangaId,
+                chapNum: 0,
+                langCode: paperback_extensions_common_1.LanguageCode.CHINEESE_HONGKONG,
+                name: "開始閱讀"
+            }));
+            return chapters;
+        }
         parsedData.series.forEach((obj) => {
             const id = obj.id;
             const name = obj.name;
